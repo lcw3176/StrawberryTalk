@@ -1,0 +1,45 @@
+﻿<Window x:Class="StrawberryClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StrawberryClient"
+        xmlns:viewModels="clr-namespace:StrawberryClient.ViewModel"
+        xmlns:views="clr-namespace:StrawberryClient.View"
+        mc:Ignorable="d"
+        x:Name="mainWindow"
+        Title="Strawberry Talk" Height="600" Width="400" WindowStyle="None"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        BorderBrush="Black"
+        BorderThickness="1">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Background="SlateGray"/>
+        
+        <Button x:Name="closeButton"
+                Grid.Row="0"
+                Content="X"
+                Foreground="White"
+                Background="Transparent"
+                HorizontalAlignment="Right"
+                Width="30"
+                BorderThickness="0"
+                Click="closeButton_Click"
+                Height="20" 
+                VerticalAlignment="Bottom"/>
+
+
+        <ContentControl Grid.Row="1" 
+                        Content="{Binding SelectedViewModel, UpdateSourceTrigger=PropertyChanged}"
+                        Background="Transparent"/>
+
+    </Grid>
+</Window>

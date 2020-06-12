@@ -1,0 +1,106 @@
+﻿<Window x:Class="StrawberryClient.View.addChatView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StrawberryClient.View"
+        mc:Ignorable="d"
+        x:Name="addChatWindow"
+        Title="addChatView" Height="600" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+
+        <Label Grid.Row="0"
+               Content="대화상대 선택"
+               Margin="10"
+               FontSize="20"/>
+
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl Margin="3"
+                          ItemsSource="{Binding addChatList, UpdateSourceTrigger=PropertyChanged}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Stretch"
+                                        Height="70">
+
+                                <StackPanel.Resources>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" 
+                                                     Value="True">
+                                                <Setter Property="Background" 
+                                                        Value="LightGray"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Resources>
+
+                                <CheckBox IsChecked="False"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Command="{Binding checkCommand}"
+                                          CommandParameter="{Binding ElementName=chatRoom}">
+
+                                    <CheckBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="20"/>
+                                        </Style>
+                                    </CheckBox.Resources>
+                                    
+                                    <CheckBox.LayoutTransform>
+                                        <ScaleTransform ScaleX="3" ScaleY="3"/>
+                                    </CheckBox.LayoutTransform>
+                                </CheckBox>
+
+                                <Border BorderBrush="Black"
+                                        BorderThickness="2"
+                                        CornerRadius="3"
+                                        Margin="3">
+
+                                    <Button Background="Transparent"
+                                            BorderThickness="0">
+
+                                        <Image Grid.Column="0" 
+                                                HorizontalAlignment="Center"                        
+                                                Width="60"
+                                                Source="{Binding friendsImage}"
+                                                Stretch="UniformToFill">
+                                        </Image>
+                                    </Button>
+                                </Border>
+
+
+                                <TextBlock x:Name="chatRoom" 
+                                           Text="{Binding friendsName}" 
+                                           FontSize="18"
+                                           Margin="5"/>
+                                
+                            </StackPanel>
+                            
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Button Grid.Row="2"
+                Content="확인"
+                HorizontalAlignment="Right"
+                Margin="7"
+                Width="100"
+                FontSize="20"
+                Command="{Binding completeCommand}"
+                CommandParameter="{Binding ElementName=addChatWindow}"/>
+
+    </Grid>
+</Window>

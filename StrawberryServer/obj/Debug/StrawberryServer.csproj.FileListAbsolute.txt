@@ -1,0 +1,11 @@
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\StrawberryServer.exe.config
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\StrawberryServer.exe
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\StrawberryServer.pdb
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\System.Data.SQLite.dll
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\System.Data.SQLite.xml
+D:\project\Cs\StrawberryTalk\StrawberryServer\bin\Debug\System.Data.SQLite.dll.config
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csprojAssemblyReference.cache
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csproj.CoreCompileInputs.cache
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csproj.CopyComplete
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.exe
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.pdb
