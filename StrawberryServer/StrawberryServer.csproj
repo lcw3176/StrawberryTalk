@@ -41,6 +41,11 @@
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.112.2\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Reflection, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.4.3.0\lib\net462\System.Reflection.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +63,7 @@
     <Compile Include="routes\Close.cs" />
     <Compile Include="routes\GetUser.cs" />
     <Compile Include="routes\GetImage.cs" />
+    <Compile Include="routes\Index.cs" />
     <Compile Include="routes\IRoutes.cs" />
     <Compile Include="routes\Join.cs" />
     <Compile Include="routes\Login.cs" />

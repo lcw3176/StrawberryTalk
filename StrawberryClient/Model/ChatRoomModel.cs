@@ -18,12 +18,11 @@ namespace StrawberryClient.Model
         private string roomName;
         private string showedRoomName;
         private string userId;
-        private string inputMessage;
+        private string inputMessage = string.Empty;
         private int pageNation = 1;
         private ImageSource profileImage;
         private Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
         ObservableCollection<MessageList> messageList = new ObservableCollection<MessageList>();
-        ObservableCollection<MessageList> clone;
 
         public Dictionary<string, ImageSource> FriendsImage
         {
@@ -96,7 +95,7 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().Send("MoreChat", roomName, userId, pageNation.ToString());
         }
 
-        string isSame = string.Empty;
+        //string isSame = string.Empty;
 
         // [0] fromUserName [1] msg
         private void Receive(string param)
@@ -122,7 +121,7 @@ namespace StrawberryClient.Model
 
                 DispatcherService.Invoke((System.Action)(() =>
                 {
-                    clone = new ObservableCollection<MessageList>(messageList.Reverse());
+                    ObservableCollection<MessageList> clone = new ObservableCollection<MessageList>(messageList.Reverse());
                     
                     for (int i = 0; i < result.Length; i += 2)
                     {
@@ -150,7 +149,7 @@ namespace StrawberryClient.Model
                             });
                         }
 
-                            isSame = result[i];
+                            //isSame = result[i];
                         }
 
                     messageList = new ObservableCollection<MessageList>(clone.Reverse());
@@ -207,12 +206,13 @@ namespace StrawberryClient.Model
 
                         }
 
-                        isSame = temp[0];
+                        //isSame = temp[0];
                     }
 
-                    move();
-                    pageNation++;
                 }));
+
+                move();
+                pageNation++;
             }
 
             // 메세지 초기 세팅
@@ -256,7 +256,7 @@ namespace StrawberryClient.Model
 
                     }));
 
-                    isSame = temp[0];
+                    //isSame = temp[0];
                 }
             }
 

@@ -146,6 +146,7 @@ namespace StrawberryClient.ViewModel
             roomView.Show();
         }
 
+
         // 종료
         private void closeExecuteMethod(object obj)
         {
