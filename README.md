@@ -93,14 +93,14 @@ CREATE TABLE user(
 
 
 ## 작동 모습
-### 로그인
+### 로그인, 회원가입
 <div>
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565365-8e7c3280-ada3-11ea-9c60-0cbe075c9c6c.png">
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565364-8d4b0580-ada3-11ea-9830-ccfed2fbc936.png">
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565366-8e7c3280-ada3-11ea-8f90-978e5ca6a779.png">
  </div>
   
-### 메인 홈
+### 메인 홈(메인 창, 내 프로필 사진 설정, 친구 프로필 사진 열람)
 <div>
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565408-eb77e880-ada3-11ea-8e3e-867c0885a1db.png">
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565407-eadf5200-ada3-11ea-8ad7-d223cad4ab3b.png">
