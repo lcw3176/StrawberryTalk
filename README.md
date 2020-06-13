@@ -93,7 +93,7 @@ CREATE TABLE user(
 
 
 ## 작동 모습
-### 로그인, 회원가입
+### 로그인, 회원가입(로그인, 중복 로그인 방지, 회원가입)
 <div>
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565365-8e7c3280-ada3-11ea-9c60-0cbe075c9c6c.png">
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565364-8d4b0580-ada3-11ea-9830-ccfed2fbc936.png">
@@ -107,7 +107,7 @@ CREATE TABLE user(
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565405-e9ae2500-ada3-11ea-9330-69360de62472.png">
  </div>
  
- ### 채팅 과정
+ ### 채팅 과정(단체 채팅방 생성, 채팅 알람, 채팅 상황)
  <div>
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565432-1f530e00-ada4-11ea-9223-97c0f4ab23c2.png">
   <img width="100" src="https://user-images.githubusercontent.com/59993347/84565433-20843b00-ada4-11ea-9dcb-40fbb0551b92.png">
