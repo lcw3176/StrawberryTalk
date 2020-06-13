@@ -100,4 +100,16 @@ CREATE TABLE user(
   <img width="300" src="https://user-images.githubusercontent.com/59993347/84565366-8e7c3280-ada3-11ea-8f90-978e5ca6a779.png">
  </div>
   
-
+### 메인 홈
+<div>
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565408-eb77e880-ada3-11ea-8e3e-867c0885a1db.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565407-eadf5200-ada3-11ea-8ad7-d223cad4ab3b.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565405-e9ae2500-ada3-11ea-9330-69360de62472.png">
+ </div>
+ 
+ ### 채팅 과정
+ <div>
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565432-1f530e00-ada4-11ea-9223-97c0f4ab23c2.png">
+  <img width="100" src="https://user-images.githubusercontent.com/59993347/84565433-20843b00-ada4-11ea-9dcb-40fbb0551b92.png">
+  <img width="500" src="https://user-images.githubusercontent.com/59993347/84565434-20843b00-ada4-11ea-9f40-8a8f5fb855b9.png">
+ </div>
