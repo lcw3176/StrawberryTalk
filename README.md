@@ -92,16 +92,31 @@ CREATE TABLE user(
 |내 프로필 사진 설정|MyImage/{id,pw}|
 |프로필 사진 기본으로 변경|DefaultImage/{id,pw}|
 
-## 사용 기술 
+## 사용 기술, 작동 방식 및 구현된 기능
+### 클라이언트 
 * WPF 사용, MVVM 패턴
-* 소켓 통신(TCP)
-
-## 구현한 기능
-* 동일 ID 중복 로그인 방지
+* 소켓 통신(TCP), 소켓 객체는 Singleton
 * 프로필 사진 설정
 * 메세지 알람
 * 단체 채팅방
 * 채팅 부분 조회(스크롤 올라갈 때마다 추가로 요청)
+
+
+### 서버
+#### Program.cs
+* 유저 접속 시 ClientThread 클래스 생성
+
+#### ClientThread.cs
+* 클라이언트 요청 대기
+* 요청에 따라 Reflection을 통한 동적 method(routes/Index.cs) 호출
+* 자료 반환
+
+#### RoomManager
+* 전체 유저 관리 클래스
+* 유저 목록 추가, 삭제 담당(Dictionary<아이디, 소켓>)
+* 중복 로그인 체크
+* 알맞은 유저에게 메세지 전송(접속 안되어 있을 시 DB에 기록, 차후 접속 시 확인가능)
+
 
 
 ## 작동 모습
