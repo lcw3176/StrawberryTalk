@@ -160,51 +160,48 @@ namespace StrawberryClient.ViewModel
         private void chatExecuteMethod(object obj)
         {
 
-            string friendName;
-            string roomName;
+            string showedRoomName;
 
             // 단톡 만들때(addChatView에서 선택시 실행)
             if ((obj as TextBlock) == null)
             {
-                friendName = obj.ToString().Replace("@", ",");
+                showedRoomName = obj.ToString();
             }
 
             // 갠톡 만들때(homeView에서 직접 클릭시 실행)
             else
             {
-                friendName = (obj as TextBlock).Text;
+                showedRoomName = (obj as TextBlock).Text;
             }
 
-            if (string.IsNullOrEmpty(friendName)) { return; }
+            if (string.IsNullOrEmpty(showedRoomName) || homeModel.isExist(showedRoomName)) { return; }
 
-            if (homeModel.isExist(friendName)) { return; }
-
-            roomName = homeModel.SetChat(friendName.Replace(",", "@"));
-
-            homeModel.addRooms(friendName);
-
-            ShowRoom(friendName, roomName);
+            ShowRoom(showedRoomName);
         }
 
         // 채팅창 띄우기
-        private void ShowRoom(string friendName, string roomName)
+        private void ShowRoom(string showedRoomName)
         {
+            string roomName = homeModel.SetChat(showedRoomName);
+
+            homeModel.addRooms(showedRoomName);
+
             ChatRoomViewModel roomViewModel = new ChatRoomViewModel();
+            roomViewModel.AttachSocket();
             roomViewModel.closeEvent += new ChatRoomViewModel.Close(homeModel.Detach);
 
             string name;
 
-            ImageSource image = friendsList.FirstOrDefault(e => e.friendsName == friendName.Split(',')[0]).friendsImage;
+            ImageSource thumbnail = friendsList.FirstOrDefault(e => e.friendsName == showedRoomName.Split(',')[0]).friendsImage;
             Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
 
-            for (int i = 0; i < friendName.Split(',').Length; i++)
+            for (int i = 0; i < showedRoomName.Split(',').Length; i++)
             {
-                name = friendName.Split(',')[i];
+                name = showedRoomName.Split(',')[i];
                 friendsImage.Add(name, friendsList.FirstOrDefault(e => e.friendsName == name).friendsImage);
             }
-             
-            roomViewModel.AttachSocket();
-            roomViewModel.Init(roomName, userId, friendName, image, friendsImage);                     
+
+            roomViewModel.Init(roomName, userId, showedRoomName, thumbnail, friendsImage);                     
         }
 
 

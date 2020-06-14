@@ -8,6 +8,7 @@
         x:Name="chatWindow"
         MouseLeftButtonDown="chatWindow_MouseLeftButtonDown" BorderBrush="Black" BorderThickness="1"
         Title="ChatRoomView" Height="600" Width="400" AllowsTransparency="True" WindowStyle="None">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>

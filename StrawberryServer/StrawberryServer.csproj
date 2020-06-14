@@ -54,22 +54,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientInfo.cs" />
+    <Compile Include="ClientThread.cs" />
     <Compile Include="DataBase\Query.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoomManager.cs" />
-    <Compile Include="routes\Chat.cs" />
-    <Compile Include="routes\Close.cs" />
-    <Compile Include="routes\GetUser.cs" />
-    <Compile Include="routes\GetImage.cs" />
+    <Compile Include="routes_old\Chat.cs" />
+    <Compile Include="routes_old\Close.cs" />
+    <Compile Include="routes_old\GetUser.cs" />
+    <Compile Include="routes_old\GetImage.cs" />
     <Compile Include="routes\Index.cs" />
-    <Compile Include="routes\IRoutes.cs" />
-    <Compile Include="routes\Join.cs" />
-    <Compile Include="routes\Login.cs" />
-    <Compile Include="routes\MoreChat.cs" />
-    <Compile Include="routes\SetImage.cs" />
-    <Compile Include="routes\SetImageDefault.cs" />
+    <Compile Include="routes_old\IRoutes.cs" />
+    <Compile Include="routes_old\Join.cs" />
+    <Compile Include="routes_old\Login.cs" />
+    <Compile Include="routes_old\MoreChat.cs" />
+    <Compile Include="routes_old\SetImage.cs" />
+    <Compile Include="routes_old\SetImageDefault.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

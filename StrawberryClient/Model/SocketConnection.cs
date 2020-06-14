@@ -78,16 +78,22 @@ namespace StrawberryClient.Model
 
                     while (isRun)
                     {
+
                         int bytesRec = GetSocket().Receive(recv);
-                        data += Encoding.UTF8.GetString(recv, 0, bytesRec);
+                        data = Encoding.UTF8.GetString(recv, 0, bytesRec);
 
                         Array.Clear(recv, 0, recv.Length);
+                        Recv(data);
+                        //    int bytesRec = GetSocket().Receive(recv);
+                        //    data += Encoding.UTF8.GetString(recv, 0, bytesRec);
 
-                        if (data.IndexOf("<EOF>") > -1)
-                        {
-                            Recv(data.Replace("<EOF>", string.Empty));
-                            break;
-                        }
+                        //    Array.Clear(recv, 0, recv.Length);
+
+                        //    if (data.IndexOf("<EOF>") > -1)
+                        //    {
+                        //        Recv(data.Replace("<EOF>", string.Empty));
+                        //        break;
+                        //    }
                     }
                 }
 
@@ -114,15 +120,17 @@ namespace StrawberryClient.Model
                 while (true)
                 {
                     int bytesRec = GetSocket().Receive(recv);
-                    data += Encoding.UTF8.GetString(recv, 0, bytesRec);
-            
-                    if (data.IndexOf("<EOF>") > -1)
-                    {                            
-                        break;
-                    }            
+                    data = Encoding.UTF8.GetString(recv, 0, bytesRec);
+
+
+                    return data;
+                    //if (data.IndexOf("<EOF>") > -1)
+                    //{                            
+                    //    break;
+                    //}            
                 }
 
-                return data.Substring(0, data.Length - 5);
+                
             }
             
             catch (Exception ex)
@@ -136,7 +144,6 @@ namespace StrawberryClient.Model
 
         public byte[] ImageReceive()
         {
-            // 이미지 크기 먼저 받아옴
             byte[] recv = new byte[8192 * 100];
 
             try
@@ -158,7 +165,7 @@ namespace StrawberryClient.Model
         {
             int sendLen = 0;
 
-            byte[] preSend = Encoding.UTF8.GetBytes(string.Format("SetImage?{0},{1}<EOF>", userId, image.Length));
+            byte[] preSend = Encoding.UTF8.GetBytes(string.Format("MyImage/{0}", image.Length));
             byte[] send = image;
 
             while (preSend.Length / 2 >= sendLen)
@@ -176,11 +183,11 @@ namespace StrawberryClient.Model
             }
         }
 
-        public void Send(string requset, params string[] queryString)
+        public void Send(string request, params string[] queryString)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(requset);
-            sb.Append("?");
+            sb.Append(request);
+            sb.Append("/");
 
             foreach (string i in queryString)
             {
@@ -191,7 +198,7 @@ namespace StrawberryClient.Model
             sb.Remove(sb.Length - 1, 1);
 
             int sendLen = 0;
-            byte[] send = Encoding.UTF8.GetBytes(sb.ToString() + "<EOF>");
+            byte[] send = Encoding.UTF8.GetBytes(sb.ToString());
 
             while (send.Length / 2 >= sendLen)
             {

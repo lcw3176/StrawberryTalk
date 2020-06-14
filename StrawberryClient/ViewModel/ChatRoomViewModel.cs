@@ -2,6 +2,7 @@
 using StrawberryClient.Model;
 using StrawberryClient.Model.ObservableCollection;
 using StrawberryClient.View;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -133,6 +134,7 @@ namespace StrawberryClient.ViewModel
         // 초기화
         public void Init(string roomName, string userId, string showedRoomName, ImageSource image, Dictionary<string, ImageSource> friendsImage)
         {
+            SocketConnection.GetInstance().Send("Room", roomName);
             this.roomName = roomName;
             this.userId = userId;
             this.showedRoomName = showedRoomName;
@@ -143,7 +145,7 @@ namespace StrawberryClient.ViewModel
             roomView.DataContext = this;
             roomView.endOfScroll += new ChatRoomView.scrollEnd(scrollEnd);
 
-            roomView.Show();
+            roomView.Show();           
         }
 
 

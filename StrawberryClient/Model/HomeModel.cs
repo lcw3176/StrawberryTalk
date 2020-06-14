@@ -77,7 +77,6 @@ namespace StrawberryClient.Model
             set { chatRoomsList = value; }
         }
 
-
         public HomeModel()
         {
             SocketConnection.GetInstance().StartRecv();
@@ -112,13 +111,13 @@ namespace StrawberryClient.Model
             return false;
         }
 
-        // 채팅방 만들기(서버로 정보 전송, 활성화 된 방 목록에 추가)
+        // 채팅방 만들기(활성화 된 방 목록에 추가)
         public string SetChat(string friendsName)
         {
             List<string> sortName = new List<string>();
             sortName.Add(userId);
 
-            foreach(string i in friendsName.Split('@'))
+            foreach(string i in friendsName.Split(','))
             {
                 sortName.Add(i);
             }
@@ -126,8 +125,6 @@ namespace StrawberryClient.Model
             sortName.Sort();
 
             string roomName = string.Join("&", sortName);
-
-            SocketConnection.GetInstance().Send("Chat", roomName);
 
             return roomName;
         }
@@ -137,21 +134,14 @@ namespace StrawberryClient.Model
         {
             if (string.IsNullOrEmpty(findUser) || findUser == this.userId) { return; }
 
-            try
-            {
-                if(friendsList.First(e => e.friendsName == findUser).friendsName == findUser)
-                {
-                    return;
-                }
-            }
+            var isRegistered = friendsList.FirstOrDefault(e => e.friendsName == findUser);
 
-            catch
+            if (isRegistered != null)
             {
-                SocketConnection.GetInstance().Send("GetUser", userId, findUser);
                 return;
             }
 
-            SocketConnection.GetInstance().Send("GetUser", userId, findUser);
+            SocketConnection.GetInstance().Send("User", findUser);
         }
 
         // 활성 채팅방 해제
@@ -371,7 +361,7 @@ namespace StrawberryClient.Model
         // 프로필 이미지 가져오기
         public ImageSource GetImage(string userId)
         {
-            SocketConnection.GetInstance().Send("GetImage", userId);
+            SocketConnection.GetInstance().Send("Image", userId);
 
             byte[] byteImage = SocketConnection.GetInstance().ImageReceive();
             ImageSourceConverter c = new ImageSourceConverter();

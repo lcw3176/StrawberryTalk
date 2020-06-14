@@ -65,7 +65,7 @@ namespace StrawberryClient.ViewModel
 
         private void completeExecuteMethod(object obj)
         {
-            onClose(string.Join("@", userList));
+            onClose(string.Join(",", userList));
             (obj as Window).Close();
         }
 

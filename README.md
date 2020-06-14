@@ -80,6 +80,18 @@ CREATE TABLE user(
 </div>
 </details>
 
+## 통신 규약
+|CRUD|Route|
+|-----------|--------|
+|로그인|Login/{id,pw}|
+|회원가입|Join/{id,pw}|
+|채팅방 메세지 로드|Room/{id,pw}|
+|채팅 Echo|Chat/{id,pw}|
+|채팅방 메세지 추가 로드|Message/{id,pw}|
+|프로필 사진 불러오기|Image/{id,pw}|
+|내 프로필 사진 설정|MyImage/{id,pw}|
+|프로필 사진 기본으로 변경|DefaultImage/{id,pw}|
+
 ## 사용 기술 
 * WPF 사용, MVVM 패턴
 * 소켓 통신(TCP)

@@ -79,7 +79,6 @@ namespace StrawberryClient.Model
         public void DetachAlarm()
         {
             SocketConnection.GetInstance().Recv -= new SocketConnection.Receive(Receive);
-
             messageList.Clear();
         }
 
@@ -92,7 +91,7 @@ namespace StrawberryClient.Model
         // 할일: chat 명령 보내는쪽에 메세지 카운터 넣어서 보내기
         public void MoreMessage()
         {
-            SocketConnection.GetInstance().Send("MoreChat", roomName, userId, pageNation.ToString());
+            SocketConnection.GetInstance().Send("Message", roomName, pageNation.ToString());
         }
 
         //string isSame = string.Empty;
@@ -102,7 +101,7 @@ namespace StrawberryClient.Model
         {
             string isMe = param.Split(new string[] { "<AND>" }, StringSplitOptions.None)[0];
 
-            if (isMe != roomName.Replace("@", "&"))
+            if (isMe != roomName)
             {
                 return;
             }
@@ -218,9 +217,9 @@ namespace StrawberryClient.Model
             // 메세지 초기 세팅
             else
             {
-                result = data.Replace("<MADE>", string.Empty).Split('&');
+                result = data.Split('&');
 
-                if(result[0].Length == 0) { return; }
+                if (result[0].Length == 0) { return; }
 
                 string[] temp;
 
@@ -230,7 +229,7 @@ namespace StrawberryClient.Model
 
                     DispatcherService.Invoke((System.Action)(() =>
                     {
-                        if(userId == temp[0])
+                        if (userId == temp[0])
                         {
                             messageList.Add(new MessageList()
                             {
@@ -261,7 +260,6 @@ namespace StrawberryClient.Model
             }
 
             update("messageList");
-
         }
     }
 }

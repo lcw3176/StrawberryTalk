@@ -32,8 +32,6 @@ namespace StrawberryClient.Model
         // 사진 설정 완료 메소드
         public void complete()
         {
-            // 유저 상태 메세지 어떻게 보낼지
-            // db에서는 어떻게 조회해서 넘길지 고민해보자
             if(!string.IsNullOrEmpty(path))
             {
                 using (MemoryStream ms = new MemoryStream())
@@ -72,8 +70,9 @@ namespace StrawberryClient.Model
 
         public void setDefault()
         {
-            SocketConnection.GetInstance().Send("SetImageDefault", UserId);
+            SocketConnection.GetInstance().Send("DefaultImage", "null");
         }
+
 
         // 엔코더 가져오기, 사진 압축 과정 중 일환
         private ImageCodecInfo GetEncoder(ImageFormat format)

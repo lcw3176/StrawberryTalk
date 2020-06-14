@@ -60,6 +60,7 @@ namespace StrawberryServer
         }
 
 
+        // 메세지 뿌리기
         public void EchoRoomUsers(string roomName, string fromUserName, string sendData)
         {
             string temp = roomName.Replace(fromUserName, string.Empty);

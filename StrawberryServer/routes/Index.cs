@@ -13,127 +13,18 @@ namespace StrawberryServer.routes
 {
     class Index
     {
-        
-        Socket socket;
+        private string userId { get; set; }
+        private Socket socket;
+
         
         public Index(Socket socket)
         {
             this.socket = socket;
         }
 
-        public byte[] Chat(string param)
-        {
-            bool isExist;
-            string roomName;
-            string fromUserName;
-            string msg;
-            string sendData = string.Empty;
-
-            roomName = param.Split(',')[0];
-            roomName = roomName.Replace("@", "&");
-
-            // 채팅 중일 때
-            try
-            {
-                fromUserName = param.Split(',')[1];
-                msg = param.Split(',')[2];
-
-                Query.GetInstance().SetMessage(roomName, fromUserName, msg);
-                sendData = string.Join("&", fromUserName, msg) + "<CHAT>";
-                isExist = true;
-
-                RoomManager.GetInstance().EchoRoomUsers(roomName, fromUserName, sendData);
-            }
-
-            // 채팅방 처음 띄울 때
-            catch (IndexOutOfRangeException)
-            {
-                // 채팅방 없으면 만들기
-                if (string.IsNullOrEmpty(Query.GetInstance().GetNameFromRoom(roomName)))
-                {
-                    Query.GetInstance().SetRoom(roomName);
-                    isExist = false;
-                }
-
-                // 존재하는 채팅방 메세지 불러오기
-                else
-                {
-                    // [0] fromUserName [1] msg
-                    List<string> data = Query.GetInstance().GetMessage(roomName);
-                    sendData = string.Join("&", data) + "<MADE>";
-                    isExist = true;
-                }
-            }
-
-            if (isExist)
-            {
-                // 방 이름을 앞에 달아서 보내주기
-                return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
-            }
-            else
-            {
-                return Encoding.UTF8.GetBytes("<FIRST>");
-            }
-        }
-
-        public byte[] Close(string param)
-        {
-            string userId = param;
-            RoomManager.GetInstance().RemoveUser(userId);
-
-            return Encoding.UTF8.GetBytes("raise Exception");
-        }
-
-        public byte[] GetImage(string param)
-        {            
-            string userId = param.Split(',')[0];
-
-            string imagePath = Query.GetInstance().GetImageFromUser(userId);
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                Image image = Image.FromFile(imagePath);
-                image.Save(ms, ImageFormat.Jpeg);
-                image.Dispose();
-                return ms.ToArray();
-            }
-        }
-
-        public byte[] GetUser(string param)
-        {
-            string userId = param.Split(',')[0];
-            string friendsName = param.Split(',')[1];
-
-            string result = Query.GetInstance().GetPersonalNameFromUser(friendsName);
-
-            if (result != "None")
-            {
-                Query.GetInstance().SetFriend(userId, friendsName);
-            }
-
-            return Encoding.UTF8.GetBytes("<FIND>" + result);
-        }
-
-        public byte[] Join(string param)
-        {
-            string userId = param.Split(',')[0];
-            string userPw = param.Split(',')[1];
-
-            if (Query.GetInstance().SetUser(userId, userPw))
-            {
-                return Encoding.UTF8.GetBytes("true");
-            }
-
-            else
-            {
-                return Encoding.UTF8.GetBytes("false");
-            }
-        }
-
         public byte[] Login(string param)
         {
-            Console.WriteLine(param + "login 메소드");
-            string userId = param.Split(',')[0];
+            userId = param.Split(',')[0];
             string userPw = param.Split(',')[1];
 
             string[] userList = Query.GetInstance().GetUserLogin().Split(',');
@@ -161,28 +52,104 @@ namespace StrawberryServer.routes
             return Encoding.UTF8.GetBytes("false");
         }
 
-        public byte[] MoreChat(string param)
+        public byte[] Join(string param)
         {
-            int pageNation;
+            userId = param.Split(',')[0];
+            string userPw = param.Split(',')[1];
+
+            if (Query.GetInstance().SetUser(userId, userPw))
+            {
+                return Encoding.UTF8.GetBytes("true");
+            }
+
+            else
+            {
+                return Encoding.UTF8.GetBytes("false");
+            }
+        }
+
+        public byte[] User(string param)
+        {
+            string findUser = param;
+            string result = Query.GetInstance().GetPersonalNameFromUser(findUser);
+
+            if (result != "None")
+            {
+                Query.GetInstance().SetFriend(userId, findUser);
+            }
+
+            return Encoding.UTF8.GetBytes("<FIND>" + result);
+        }
+
+        public byte[] Room(string param)
+        {
+            string roomName = param;
+            
+            // 채팅방 없으면 만들기
+            if (string.IsNullOrEmpty(Query.GetInstance().GetNameFromRoom(roomName)))
+            {
+                Query.GetInstance().SetRoom(roomName);
+
+                return Encoding.UTF8.GetBytes("<FIRST>");
+            }
+
+            // 존재하는 채팅방 메세지 불러오기
+            else
+            {
+                List<string> data = Query.GetInstance().GetMessage(roomName);
+                string sendData = string.Join("&", data);
+                // 방 이름을 앞에 달아서 보내주기
+                return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+            }
+        }
+
+        public byte[] Chat(string param)
+        {
             string roomName = param.Split(',')[0];
+
             string fromUserName = param.Split(',')[1];
-            int.TryParse(param.Split(',')[2], out pageNation);
+            string msg = param.Split(',')[2];
+            
+            Query.GetInstance().SetMessage(roomName, fromUserName, msg);
+            string sendData = string.Join("&", fromUserName, msg) + "<CHAT>";
+            
+            RoomManager.GetInstance().EchoRoomUsers(roomName, fromUserName, sendData);
+            return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+        }
+
+        public byte[] Message(string param)
+        {
+            string roomName = param.Split(',')[0];
+            int pageNation = int.Parse(param.Split(',')[1]);
 
             List<string> data = Query.GetInstance().GetMessage(roomName, pageNation);
             string sendData = string.Join("&", data) + "<PLUS>";
 
             return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
-
         }
 
-        public byte[] SetImage(string param)
-        {
+
+        public byte[] Image(string param)
+        {            
             string userId = param.Split(',')[0];
-            int len = int.Parse(param.Split(',')[1]);
+
+            string imagePath = Query.GetInstance().GetImageFromUser(userId);
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Image image = System.Drawing.Image.FromFile(imagePath);
+                image.Save(ms, ImageFormat.Jpeg);
+                image.Dispose();
+                return ms.ToArray();
+            }
+        }
+     
+
+        public byte[] MyImage(string param)
+        {
+            int len = int.Parse(param);
 
             byte[] byteImage = new byte[len];
-
-            // len == 0일땐 상태 메세지만 변경
 
             string path = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\" + userId + ".jpg";
 
@@ -190,7 +157,7 @@ namespace StrawberryServer.routes
 
             using (MemoryStream ms = new MemoryStream(byteImage))
             {
-                Image image = Image.FromStream(ms);
+                Image image = System.Drawing.Image.FromStream(ms);
                 image.Save(path, ImageFormat.Jpeg);
                 image.Dispose();
             }
@@ -200,10 +167,8 @@ namespace StrawberryServer.routes
             return Encoding.UTF8.GetBytes("<RFRH>");
         }
 
-        public byte[] SetImageDefault(string param)
+        public byte[] DefaultImage(string param)
         {
-            string userId = param.Split(',')[0];
-
             Query.GetInstance().SetImage(userId, null);
 
             return Encoding.UTF8.GetBytes("<RFRH>");
