@@ -87,12 +87,12 @@ CREATE TABLE user(
 |회원가입|Join/{id,pw}|
 |채팅방 메세지 로드|Room/{id,pw}|
 |채팅 Echo|Chat/{id,pw}|
-|채팅방 메세지 추가 로드|Message/{id,pw}|
-|프로필 사진 불러오기|Image/{id,pw}|
-|내 프로필 사진 설정|MyImage/{id,pw}|
-|프로필 사진 기본으로 변경|DefaultImage/{id,pw}|
+|채팅방 메세지 추가 로드|Message/{roomName}|
+|프로필 사진 불러오기|Image/{id}|
+|내 프로필 사진 설정|MyImage/{ImageByteLength}|
+|프로필 사진 기본으로 변경|DefaultImage/{null}|
 
-## 작동 방식 및 구현된 기능
+## 작동 방식 및 구현 기능
 ### 클라이언트 
 * WPF 사용, MVVM 패턴
 * 소켓 통신(TCP), 소켓 객체는 Singleton
@@ -111,7 +111,7 @@ CREATE TABLE user(
 * 요청에 따라 Reflection을 통한 동적 method(routes/Index.cs) 호출
 * 자료 반환
 
-#### RoomManager
+#### RoomManager.cs
 * 전체 유저 관리 클래스
 * 유저 목록 추가, 삭제 담당(Dictionary<아이디, 소켓>)
 * 중복 로그인 체크
