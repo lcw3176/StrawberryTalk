@@ -85,9 +85,9 @@ CREATE TABLE user(
 |-----------|--------|
 |로그인|Login/{id,pw}|
 |회원가입|Join/{id,pw}|
-|채팅방 메세지 로드|Room/{id,pw}|
-|채팅 Echo|Chat/{id,pw}|
-|채팅방 메세지 추가 로드|Message/{roomName}|
+|채팅방 메세지 로드|Room/{roomName}|
+|채팅 Echo|Chat/{roomName, id, message}|
+|채팅방 메세지 추가 로드|Message/{roomName, pagination}|
 |프로필 사진 불러오기|Image/{id}|
 |내 프로필 사진 설정|MyImage/{ImageByteLength}|
 |프로필 사진 기본으로 변경|DefaultImage/{null}|
