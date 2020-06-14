@@ -92,7 +92,7 @@ CREATE TABLE user(
 |내 프로필 사진 설정|MyImage/{id,pw}|
 |프로필 사진 기본으로 변경|DefaultImage/{id,pw}|
 
-## 사용 기술, 작동 방식 및 구현된 기능
+## 작동 방식 및 구현된 기능
 ### 클라이언트 
 * WPF 사용, MVVM 패턴
 * 소켓 통신(TCP), 소켓 객체는 Singleton
