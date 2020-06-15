@@ -117,12 +117,7 @@ namespace StrawberryClient.ViewModel
             chatRoomModel.MoreMessage();
         }
 
-
-        private void NotifyUpdate(string propertyName)
-        {
-            OnPropertyUpdate(propertyName);
-        }
-
+        // 메세지 추가 로딩 후 스크롤 위치 이동
         private void MoveScrollToMiddle()
         {
             DispatcherService.Invoke((System.Action)(() =>
@@ -131,9 +126,26 @@ namespace StrawberryClient.ViewModel
             }));
         }
 
+        private void NotifyUpdate(string propertyName)
+        {
+            OnPropertyUpdate(propertyName);
+        }
+
+
+        // 메세지 보내기
+        private void sendExecuteMethod(object obj)
+        {
+            if (string.IsNullOrEmpty(inputMessage.Trim())) { return; }
+            chatRoomModel.Send();
+            (obj as ScrollViewer).ScrollToEnd();
+            inputMessage = string.Empty;
+        }
+
+
         // 초기화
         public void Init(string roomName, string userId, string showedRoomName, ImageSource image, Dictionary<string, ImageSource> friendsImage)
         {
+            AttachSocket();
             SocketConnection.GetInstance().Send("Room", roomName);
             this.roomName = roomName;
             this.userId = userId;
@@ -160,14 +172,6 @@ namespace StrawberryClient.ViewModel
             (obj as Window).Close();
         }
 
-        // 메세지 보내기
-        private void sendExecuteMethod(object obj)
-        {
-            if (string.IsNullOrEmpty(inputMessage.Trim())) { return; }
-            chatRoomModel.Send();
-            (obj as ScrollViewer).ScrollToEnd();
-            inputMessage = string.Empty;
-        }
 
         private void OnPropertyUpdate(string propertyName)
         {

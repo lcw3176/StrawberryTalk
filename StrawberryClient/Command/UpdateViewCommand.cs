@@ -43,8 +43,7 @@ namespace StrawberryClient.Command
             if (parameter.ToString() == "Home")
             {
                 HomeViewModel home = new HomeViewModel();
-                home.userId = userId;
-                home.SetInfo(result);
+                home.Init(userId, result);
                 viewModel.SelectedViewModel = home;
             }
         }

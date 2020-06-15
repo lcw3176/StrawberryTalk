@@ -1,6 +1,7 @@
 D:\project\Cs\StrawberryTalk\StrawberryClient\bin\Debug\StrawberryClient.exe.config
 D:\project\Cs\StrawberryTalk\StrawberryClient\bin\Debug\StrawberryClient.exe
 D:\project\Cs\StrawberryTalk\StrawberryClient\bin\Debug\StrawberryClient.pdb
+D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csprojAssemblyReference.cache
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\MainWindow.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\View\AddChatView.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\View\AlarmView.g.cs
@@ -28,4 +29,3 @@ D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csproj.
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csproj.CoreCompileInputs.cache
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.exe
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.pdb
-D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csprojAssemblyReference.cache

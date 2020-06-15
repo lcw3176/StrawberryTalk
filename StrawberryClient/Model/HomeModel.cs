@@ -242,7 +242,7 @@ namespace StrawberryClient.Model
                     {
                         roomCommand = chatCommand,
                         roomName = name,
-                        roomImage = GetImage(name.Split(',')[0]), // 단톡 빵꾸 코드
+                        roomImage = GetImage(name.Split(',')[0]),
                     });
                 }));
             }

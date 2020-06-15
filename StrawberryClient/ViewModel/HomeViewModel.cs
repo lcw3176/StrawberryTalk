@@ -114,10 +114,7 @@ namespace StrawberryClient.ViewModel
         {
             AddChatViewModel addChatViewModel =  new AddChatViewModel();
             addChatViewModel.onClose += new AddChatViewModel.Close(chatExecuteMethod);
-            addChatViewModel.addChatList = friendsList;
-
-            addChatView addChat = new addChatView() { DataContext = addChatViewModel };
-            addChat.Show();
+            addChatViewModel.Init(friendsList);
         }
 
         // 친구 프로필 사진 보기
@@ -126,27 +123,14 @@ namespace StrawberryClient.ViewModel
             string viewUser =  (obj as TextBlock).Text;
 
             SetProfileViewModel viewModel = new SetProfileViewModel();
-            viewModel.userId = "not";
-            viewModel.profileImage = friendsList.FirstOrDefault(e => e.friendsName == viewUser).friendsImage;
-            SetProfileView setProfile = new SetProfileView()
-            {
-                DataContext = viewModel,
-            };
-            setProfile.Show();
+            viewModel.Init("not", friendsList.FirstOrDefault(e => e.friendsName == viewUser).friendsImage);
         }
 
         // 내 프로필 사진 설정
         private void setProfileExecuteMethod(object obj)
         {
             SetProfileViewModel viewModel = new SetProfileViewModel();
-            viewModel.userId = this.userId;
-
-            viewModel.profileImage = userImage;
-            SetProfileView setProfile = new SetProfileView()
-            {
-                DataContext = viewModel,
-            };
-            setProfile.Show();
+            viewModel.Init(userId, userImage);
         }
 
         // 유저 검색 커맨드
@@ -159,7 +143,6 @@ namespace StrawberryClient.ViewModel
         // 채팅 시작 커맨드
         private void chatExecuteMethod(object obj)
         {
-
             string showedRoomName;
 
             // 단톡 만들때(addChatView에서 선택시 실행)
@@ -183,22 +166,17 @@ namespace StrawberryClient.ViewModel
         private void ShowRoom(string showedRoomName)
         {
             string roomName = homeModel.SetChat(showedRoomName);
-
             homeModel.addRooms(showedRoomName);
 
             ChatRoomViewModel roomViewModel = new ChatRoomViewModel();
-            roomViewModel.AttachSocket();
             roomViewModel.closeEvent += new ChatRoomViewModel.Close(homeModel.Detach);
-
-            string name;
 
             ImageSource thumbnail = friendsList.FirstOrDefault(e => e.friendsName == showedRoomName.Split(',')[0]).friendsImage;
             Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
 
-            for (int i = 0; i < showedRoomName.Split(',').Length; i++)
+            foreach(string i in showedRoomName.Split(','))
             {
-                name = showedRoomName.Split(',')[i];
-                friendsImage.Add(name, friendsList.FirstOrDefault(e => e.friendsName == name).friendsImage);
+                friendsImage.Add(i, friendsList.FirstOrDefault(e => e.friendsName == i).friendsImage);
             }
 
             roomViewModel.Init(roomName, userId, showedRoomName, thumbnail, friendsImage);                     
@@ -207,8 +185,9 @@ namespace StrawberryClient.ViewModel
 
 
         // 초기화
-        public void SetInfo(string friendsId)
+        public void Init(string userId, string friendsId)
         {
+            this.userId = userId;
             homeModel.Init(friendsId);
         }
     }

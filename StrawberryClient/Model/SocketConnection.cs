@@ -67,7 +67,6 @@ namespace StrawberryClient.Model
         // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
-
             byte[] recv = new byte[4096];
 
             while (true)

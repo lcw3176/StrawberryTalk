@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using StrawberryClient.Command;
 using StrawberryClient.Model;
+using StrawberryClient.View;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -82,6 +83,18 @@ namespace StrawberryClient.ViewModel
         {
             setProfileModel.complete();
             (obj as Window).Close();
+        }
+
+        public void Init(string userId, ImageSource userImage)
+        {
+            this.userId = userId;
+            this.profileImage = userImage;
+
+            SetProfileView setProfile = new SetProfileView()
+            {
+                DataContext = this,
+            };
+            setProfile.Show();
         }
 
         private void OnPropertyUpdate(string propertyName)

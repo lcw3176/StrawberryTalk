@@ -1,6 +1,7 @@
 ﻿using StrawberryClient.Command;
 using StrawberryClient.Model;
 using StrawberryClient.Model.ObservableCollection;
+using StrawberryClient.View;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -46,7 +47,7 @@ namespace StrawberryClient.ViewModel
 
         }
 
-
+        // 
         private void checkExecuteMethod(object obj)
         {
             var id = userList.Find(e => e == (obj as TextBlock).Text);
@@ -63,10 +64,19 @@ namespace StrawberryClient.ViewModel
             
         }
 
+        // 선택된 유저 리스트 넘긴 후 종료
         private void completeExecuteMethod(object obj)
         {
             onClose(string.Join(",", userList));
             (obj as Window).Close();
+        }
+
+        // 초기화 코드
+        public void Init(ObservableCollection<Friends> friends)
+        {
+            this.addChatList = friends;
+            addChatView addChat = new addChatView() { DataContext = this };
+            addChat.Show();
         }
 
         private void OnPropertyUpdate(string propertyName)

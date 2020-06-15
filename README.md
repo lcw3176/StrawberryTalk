@@ -85,6 +85,7 @@ CREATE TABLE user(
 |-----------|--------|
 |로그인|Login/{id,pw}|
 |회원가입|Join/{id,pw}|
+|유저 검색|User/{id}|
 |채팅방 메세지 로드|Room/{roomName}|
 |채팅 Echo|Chat/{roomName, id, message}|
 |채팅방 메세지 추가 로드|Message/{roomName, pagination}|

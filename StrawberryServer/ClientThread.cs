@@ -48,7 +48,7 @@ namespace StrawberryServer
 
                     Type type = index.GetType();
                     MethodInfo routes = type.GetMethod(router, BindingFlags.Instance | BindingFlags.Public);
-                    byte[] byteData = (byte[])routes.Invoke(index, new object[] { param  });
+                    byte[] byteData = (byte[])routes.Invoke(index, new object[] { param });
 
                     int sendLen = 0;
 

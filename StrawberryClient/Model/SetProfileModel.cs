@@ -44,6 +44,7 @@ namespace StrawberryClient.Model
 
                     Image image = Image.FromFile(path);
 
+                    // 사진 크기가 크면 줄여줌
                     if(image.Height + image.Width >= 3000)
                     {
                         Size size = new Size(1920, 1080);
@@ -68,13 +69,14 @@ namespace StrawberryClient.Model
 
         }
 
+        // 기본 프로필 사진으로 설정
         public void setDefault()
         {
             SocketConnection.GetInstance().Send("DefaultImage", "null");
         }
 
 
-        // 엔코더 가져오기, 사진 압축 과정 중 일환
+        // 엔코더 가져오기
         private ImageCodecInfo GetEncoder(ImageFormat format)
         {
             ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
