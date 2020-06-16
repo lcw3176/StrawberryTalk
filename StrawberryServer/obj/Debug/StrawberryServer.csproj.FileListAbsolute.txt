@@ -8,4 +8,3 @@ D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csproj.
 D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csproj.CopyComplete
 D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.exe
 D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.pdb
-D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Debug\StrawberryServer.csprojAssemblyReference.cache

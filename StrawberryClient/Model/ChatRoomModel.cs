@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Media;
 
 namespace StrawberryClient.Model
@@ -94,7 +95,7 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().Send("Message", roomName, pageNation.ToString());
         }
 
-        //string isSame = string.Empty;
+        string isSame = string.Empty;
 
         // [0] fromUserName [1] msg
         private void Receive(string param)
@@ -113,58 +114,52 @@ namespace StrawberryClient.Model
             string[] result;
 
             // 메세지 지속적 주고 받는 상황
-            // 이미 reverse 된 상황이기 때문에 이곳은 다르게 처리
-            if (data.Split('&').Length <= 2 && data.Substring(data.Length - 6, 6) == "<CHAT>")
+            if (data.Split('&').Length <= 2 && data.Contains("<CHAT>"))
             {
                 result = data.Replace("<CHAT>", string.Empty).Split('&');
 
                 DispatcherService.Invoke((System.Action)(() =>
                 {
-                    ObservableCollection<MessageList> clone = new ObservableCollection<MessageList>(messageList.Reverse());
-                    
+
                     for (int i = 0; i < result.Length; i += 2)
                     {
-                        if(userId == result[i])
+                        // is Me
+                        if (userId == result[i])
                         {
-                            clone.Add(new MessageList()
+                            messageList.Add(new MessageList()
                             {
                                 userName = result[i],
                                 message = result[i + 1],
                                 isMe = (result[i] == userId),
-                                //sameBefore = (isSame == result[i]),
-                                //profileImage = friendsImage[result[i]],
+                                sameBefore = (isSame == result[i]),
                             });
                         }
 
                         else
                         {
-                            clone.Add(new MessageList()
+                            messageList.Add(new MessageList()
                             {
                                 userName = result[i],
                                 message = result[i + 1],
                                 isMe = (result[i] == userId),
-                                //sameBefore = (isSame == result[i]),
+                                sameBefore = (isSame == result[i]),
                                 profileImage = friendsImage[result[i]],
                             });
                         }
 
-                            //isSame = result[i];
-                        }
+                        isSame = result[i];
+                    }
 
-                    messageList = new ObservableCollection<MessageList>(clone.Reverse());
+                   
                 }));
 
             }
 
             // 메세지 추가 로딩
-            else if(data.Substring(data.Length - 6, 6) == "<PLUS>")
+            else if(data.Contains("<PLUS>"))
             {
                 result = data.Replace("<PLUS>", string.Empty).Split('&');
                 string[] temp;
-
-                // 20 19 18 17 16 15   .... 10 9 8 7 6 5
-                // 메세지 add로 추가하는 형식으로 정함.
-                // set에서 reverse해서 뱉어내기
 
                 DispatcherService.Invoke((System.Action)(() =>
                 {
@@ -173,12 +168,11 @@ namespace StrawberryClient.Model
                         return;
                     }
 
-                    //messageList.Clear();
-
                     for (int i = 0;i < result.Length; i++)
                     {
                         temp = result[i].Split(',');
 
+                        // is Me
                         if(userId == temp[0])
                         {
                             messageList.Add(new MessageList()
@@ -186,8 +180,7 @@ namespace StrawberryClient.Model
                                 userName = temp[0],
                                 message = temp[1],
                                 isMe = (temp[0] == userId),
-                                //sameBefore = (isSame == result[i].Split(',')[0]),
-                                //profileImage = friendsImage[temp[0]],
+                                sameBefore = (isSame == result[i].Split(',')[0]),
                             });
 
                         }
@@ -199,13 +192,13 @@ namespace StrawberryClient.Model
                                 userName = temp[0],
                                 message = temp[1],
                                 isMe = (temp[0] == userId),
-                                //sameBefore = (isSame == result[i].Split(',')[0]),
+                                sameBefore = (isSame == result[i].Split(',')[0]),
                                 profileImage = friendsImage[temp[0]],
                             });
 
                         }
 
-                        //isSame = temp[0];
+                        isSame = temp[0];
                     }
 
                 }));
@@ -229,6 +222,7 @@ namespace StrawberryClient.Model
 
                     DispatcherService.Invoke((System.Action)(() =>
                     {
+                        // is Me
                         if (userId == temp[0])
                         {
                             messageList.Add(new MessageList()
@@ -236,8 +230,7 @@ namespace StrawberryClient.Model
                                 userName = temp[0],
                                 message = temp[1],
                                 isMe = (temp[0] == userId),
-                                //sameBefore = (isSame == result[i].Split(',')[0]),
-                                //profileImage = friendsImage[temp[0]],
+                                sameBefore = (isSame == result[i].Split(',')[0]),
                             });
                         }
 
@@ -248,14 +241,14 @@ namespace StrawberryClient.Model
                                 userName = temp[0],
                                 message = temp[1],
                                 isMe = (temp[0] == userId),
-                                //sameBefore = (isSame == result[i].Split(',')[0]),
+                                sameBefore = (isSame == result[i].Split(',')[0]),
                                 profileImage = friendsImage[temp[0]],
                             });
                         }
 
                     }));
 
-                    //isSame = temp[0];
+                    isSame = temp[0];
                 }
             }
 

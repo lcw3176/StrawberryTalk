@@ -374,7 +374,6 @@ namespace StrawberryClient.Model
                     string userId = pop[0];
                     string waitClass = pop[1];
 
-                    Console.WriteLine(userId + waitClass);
                     if (waitClass == collectionName.UserImage.ToString())
                     {
                         UserImage = (ImageSource)c.ConvertFrom(outStream.ToArray());

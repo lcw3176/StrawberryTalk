@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,7 +29,7 @@ namespace StrawberryClient.ViewModel
 
         public ObservableCollection<MessageList> messageList
         {
-            get { return chatRoomModel.MessageList; }
+            get { return new ObservableCollection<MessageList>(chatRoomModel.MessageList.Reverse()); }
             set
             { 
                 chatRoomModel.MessageList = value;
@@ -110,9 +111,8 @@ namespace StrawberryClient.ViewModel
         double height;
 
         // 스크롤 끝까지 당겼을 때 메세지 추가 요청
-        public void scrollEnd(ScrollViewer scroll)
+        public void scrollEnd()
         {
-            this.scroll = scroll;
             height = scroll.ScrollableHeight;
             chatRoomModel.MoreMessage();
         }
@@ -137,7 +137,7 @@ namespace StrawberryClient.ViewModel
         {
             if (string.IsNullOrEmpty(inputMessage.Trim())) { return; }
             chatRoomModel.Send();
-            (obj as ScrollViewer).ScrollToEnd();
+            scroll.ScrollToEnd();
             inputMessage = string.Empty;
         }
 
@@ -156,6 +156,7 @@ namespace StrawberryClient.ViewModel
 
             roomView = new ChatRoomView();
             roomView.DataContext = this;
+            this.scroll = roomView.scrollView;
             roomView.endOfScroll += new ChatRoomView.scrollEnd(scrollEnd);
 
             roomView.Show();           

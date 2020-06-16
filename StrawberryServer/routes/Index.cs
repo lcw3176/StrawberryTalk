@@ -132,7 +132,8 @@ namespace StrawberryServer.routes
 
         public byte[] Image(string param)
         {
-            string userId = param;
+            // 단톡일 경우 맨 앞사람 프사로 갖다줌
+            string userId = param.Split(',')[0];
 
             string imagePath = Query.GetInstance().GetImageFromUser(userId);
 

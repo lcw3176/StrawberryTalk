@@ -214,7 +214,7 @@ namespace StrawberryServer.DataBase
                 msg.Add(reader["fromUserName"].ToString() + "," + reader["message"].ToString());
             }
 
-            //msg.Reverse();
+            msg.Reverse();
             reader.Close();
             cmd.Dispose();
             
@@ -244,7 +244,7 @@ namespace StrawberryServer.DataBase
                 msg.Add(reader["fromUserName"].ToString() + "," + reader["message"].ToString());
             }
 
-            //msg.Reverse();
+            msg.Reverse();
             reader.Close();
             cmd.Dispose();
 

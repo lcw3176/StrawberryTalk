@@ -19,7 +19,8 @@ namespace StrawberryClient.Model
         public static SocketConnection Instance;
         private Socket socket;
         public string data;
-
+        byte[] recv = new byte[2048 * 100];
+        private object lockObject = new object();
 
         public SocketConnection()
         {
@@ -67,16 +68,24 @@ namespace StrawberryClient.Model
             thread.Start();
         }
 
+
         // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
-            byte[] recv = new byte[2048 * 100];
+            byte[] recv;
             int dataType;
 
             while (true)
             {
                 try
-                { 
+                {
+                    byte[] recvSize = new byte[4];
+                    GetSocket().Receive(recvSize);
+
+                    int dataSize = BitConverter.ToInt32(recvSize, 0);
+
+                    recv = new byte[dataSize];
+
                     int bytesRec = GetSocket().Receive(recv);
                     
                     dataType = BitConverter.ToInt32(recv, 0);
@@ -84,8 +93,7 @@ namespace StrawberryClient.Model
                     if(dataType == (int)PacketType.Text)
                     {
                         data = Encoding.UTF8.GetString(recv, 4, bytesRec - 4);
-                        Recv(data);
-                    
+                        Recv(data);                    
                     }
                     
                     else
@@ -109,11 +117,17 @@ namespace StrawberryClient.Model
         // 로그인 시 잠깐 씀
         public string LoginRecv()
         {
-            
-            byte[] recv = new byte[1024];
+
+            byte[] recv;
                
             try
             {
+                byte[] recvSize = new byte[4];
+                socket.Receive(recvSize, 0, 4, SocketFlags.None);
+
+                int dataSize = BitConverter.ToInt32(recvSize, 0);
+                recv = new byte[dataSize];
+
                 data = null;
 
                 int bytesRec = GetSocket().Receive(recv);
@@ -146,6 +160,11 @@ namespace StrawberryClient.Model
             text.CopyTo(send, 4);
             image.CopyTo(send, 11);
 
+            byte[] size;
+
+            size = BitConverter.GetBytes(send.Length);
+            GetSocket().Send(size);
+
             while (send.Length / 2 >= sendLen)
             {
                 sendLen += GetSocket().Send(send);
@@ -174,15 +193,15 @@ namespace StrawberryClient.Model
             text.CopyTo(send, 4);
 
             int sendLen = 0;
-            
+            byte[] size;
+
+            size = BitConverter.GetBytes(send.Length);
+            GetSocket().Send(size);
 
             while (send.Length / 2 >= sendLen)
             {
-                sendLen += GetInstance().GetSocket().Send(send);
+                sendLen += GetSocket().Send(send);
             }
-
-            Thread.Sleep(15);
-
         }
 
     }

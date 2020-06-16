@@ -10,7 +10,7 @@ namespace StrawberryClient.View
     public partial class ChatRoomView : Window
     {
 
-        public delegate void scrollEnd(ScrollViewer scrollViewer);
+        public delegate void scrollEnd();
         public event scrollEnd endOfScroll;
         private int height = 1100;
 
@@ -35,7 +35,7 @@ namespace StrawberryClient.View
 
             if (scroll.VerticalOffset == 0 && scroll.ScrollableHeight - scroll.VerticalOffset >= height)
             {
-                endOfScroll(scroll);
+                endOfScroll();
             }
         }
 

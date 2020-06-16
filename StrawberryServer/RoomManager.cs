@@ -10,7 +10,7 @@ namespace StrawberryServer
     {
         public static RoomManager instance;
         Dictionary<string, Socket> userDic = new Dictionary<string, Socket>();
-
+        enum PacketType { Text, Image };
         public static RoomManager GetInstance()
         {
             if(instance == null)
@@ -66,12 +66,20 @@ namespace StrawberryServer
             string temp = roomName.Replace(fromUserName, string.Empty);
             string[] key = temp.Replace("&&", "&").Trim().Split('&');
 
+            byte[] type = BitConverter.GetBytes((int)PacketType.Text);
+            byte[] text = Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+
+            byte[] send = new byte[type.Length + text.Length];
+
+            type.CopyTo(send, 0);
+            text.CopyTo(send, 4);
+
             foreach (string i in key)
             {
                 // 유저 접속 여부 체크
                 if (userDic.TryGetValue(i, out Socket sockTemp))
                 {
-                    userDic[i].Send(Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData + "<EOF>"));
+                    userDic[i].Send(send);
                 }
 
                 else
