@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace StrawberryClient.Model
 {
@@ -10,17 +11,19 @@ namespace StrawberryClient.Model
     class SocketConnection
     {
         public delegate void Receive(string param);
+        public delegate void ImageReceive(byte[] image);
         public event Receive Recv;
+        public event ImageReceive imageRecv;
 
-
+        enum PacketType { Text, Image };
         public static SocketConnection Instance;
         private Socket socket;
         public string data;
-        public bool isRun { get; set; }
+
 
         public SocketConnection()
         {
-            isRun = false;
+
         }
 
         public static SocketConnection GetInstance()
@@ -67,33 +70,30 @@ namespace StrawberryClient.Model
         // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
-            byte[] recv = new byte[4096];
+            byte[] recv = new byte[2048 * 100];
+            int dataType;
 
             while (true)
             {
                 try
                 { 
-                    data = null;
-
-                    while (isRun)
+                    int bytesRec = GetSocket().Receive(recv);
+                    
+                    dataType = BitConverter.ToInt32(recv, 0);
+                    
+                    if(dataType == (int)PacketType.Text)
                     {
-
-                        int bytesRec = GetSocket().Receive(recv);
-                        data = Encoding.UTF8.GetString(recv, 0, bytesRec);
-
-                        Array.Clear(recv, 0, recv.Length);
+                        data = Encoding.UTF8.GetString(recv, 4, bytesRec - 4);
                         Recv(data);
-                        //    int bytesRec = GetSocket().Receive(recv);
-                        //    data += Encoding.UTF8.GetString(recv, 0, bytesRec);
-
-                        //    Array.Clear(recv, 0, recv.Length);
-
-                        //    if (data.IndexOf("<EOF>") > -1)
-                        //    {
-                        //        Recv(data.Replace("<EOF>", string.Empty));
-                        //        break;
-                        //    }
+                    
                     }
+                    
+                    else
+                    {
+                        imageRecv(recv);
+                    }
+                    
+                    Array.Clear(recv, 0, recv.Length);
                 }
 
                 catch (Exception ex)
@@ -115,21 +115,13 @@ namespace StrawberryClient.Model
             try
             {
                 data = null;
-            
-                while (true)
-                {
-                    int bytesRec = GetSocket().Receive(recv);
-                    data = Encoding.UTF8.GetString(recv, 0, bytesRec);
 
-
-                    return data;
-                    //if (data.IndexOf("<EOF>") > -1)
-                    //{                            
-                    //    break;
-                    //}            
-                }
-
+                int bytesRec = GetSocket().Receive(recv);
+                data = Encoding.UTF8.GetString(recv, 4, bytesRec - 4);
                 
+                
+                return data;
+          
             }
             
             catch (Exception ex)
@@ -141,42 +133,20 @@ namespace StrawberryClient.Model
                 
         }
 
-        public byte[] ImageReceive()
-        {
-            byte[] recv = new byte[8192 * 100];
-
-            try
-            {
-                GetSocket().Receive(recv);
-
-                return recv;
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                GetSocket().Close();
-                return null;
-            }
-        }
-
-        public void ImageSend(byte[] image, string userId)
+        public void ImageSend(byte[] image)
         {
             int sendLen = 0;
 
-            byte[] preSend = Encoding.UTF8.GetBytes(string.Format("MyImage/{0}", image.Length));
-            byte[] send = image;
+            byte[] packetType = BitConverter.GetBytes((int)PacketType.Image);
+            byte[] text = Encoding.UTF8.GetBytes("MyImage");
 
-            while (preSend.Length / 2 >= sendLen)
-            {
-                sendLen += GetSocket().Send(preSend);
-            }
+            byte[] send = new byte[packetType.Length + text.Length + image.Length];
 
-            // 딜레이 넣어서 서버에서 준비할 시간 주기
-            Thread.Sleep(100);
-            sendLen = 0;
+            packetType.CopyTo(send, 0);
+            text.CopyTo(send, 4);
+            image.CopyTo(send, 11);
 
-            while(send.Length / 2 >= sendLen)
+            while (send.Length / 2 >= sendLen)
             {
                 sendLen += GetSocket().Send(send);
             }
@@ -196,13 +166,22 @@ namespace StrawberryClient.Model
 
             sb.Remove(sb.Length - 1, 1);
 
+            byte[] packetType = BitConverter.GetBytes((int)PacketType.Text);
+            byte[] text = Encoding.UTF8.GetBytes(sb.ToString());
+            byte[] send = new byte[packetType.Length + text.Length];
+
+            packetType.CopyTo(send, 0);
+            text.CopyTo(send, 4);
+
             int sendLen = 0;
-            byte[] send = Encoding.UTF8.GetBytes(sb.ToString());
+            
 
             while (send.Length / 2 >= sendLen)
             {
                 sendLen += GetInstance().GetSocket().Send(send);
             }
+
+            Thread.Sleep(15);
 
         }
 

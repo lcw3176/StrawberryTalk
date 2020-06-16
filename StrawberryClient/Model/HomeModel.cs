@@ -26,7 +26,9 @@ namespace StrawberryClient.Model
         private List<string> activateRoom = new List<string>();
         ObservableCollection<Friends> friendsList = new ObservableCollection<Friends>();
         ObservableCollection<ChatRooms> chatRoomsList = new ObservableCollection<ChatRooms>();
-        List<ChatRoomView> roomViews = new List<ChatRoomView>();
+        Queue<string> imageWait = new Queue<string>();
+        
+        enum collectionName { UserImage, chatRoomList, friendsList };
         
 
         public string FindUser
@@ -81,6 +83,7 @@ namespace StrawberryClient.Model
         {
             SocketConnection.GetInstance().StartRecv();
             SocketConnection.GetInstance().Recv += new SocketConnection.Receive(Receive);
+            SocketConnection.GetInstance().imageRecv += new SocketConnection.ImageReceive(ImageRecv);
         }
 
         // 채팅방 존재 여부 확인
@@ -130,7 +133,7 @@ namespace StrawberryClient.Model
         }
 
         // 유저 검색으로 찾은 후 추가
-        public void GetUser()
+        public void GetUser(string findUser)
         {
             if (string.IsNullOrEmpty(findUser) || findUser == this.userId) { return; }
 
@@ -151,7 +154,6 @@ namespace StrawberryClient.Model
         }
 
 
-        // 경로 Search(유저 검색), Chat(채팅 시작), Change(프로필 설정 교체), Alarm(메세지 도착 감시)
         private void Receive(string param)
         {
             // 유저 검색했을 때
@@ -161,26 +163,10 @@ namespace StrawberryClient.Model
                 addFriend(name);
             }
 
-            // 프로필 사진 교체 시, 새로고침 눌렀을 때
+            // 프로필 사진 교체 시
             else if(param.Substring(0, 6) == "<RFRH>")
             {
-                SocketConnection.GetInstance().isRun = false;
-                UserImage = GetImage(userId);
-
-                changed("userImage");
-
-                DispatcherService.Invoke((System.Action)(() =>
-                {
-                    for(int i = 0;i < friendsList.Count; i++)
-                    {
-                        friendsList[i].friendsImage = GetImage(friendsList[i].friendsName);
-                    }
-
-                    changed("friendsList");
-                }));
-
-
-                SocketConnection.GetInstance().isRun = true;
+                Refresh();
             }
 
             // 다른 사람한테서 채팅 왔을 때
@@ -209,7 +195,6 @@ namespace StrawberryClient.Model
         private void addFriend(string name)
         {
             if (name == "None") { return; }
-            SocketConnection.GetInstance().isRun = false;
 
             DispatcherService.Invoke((System.Action)(() =>
             {
@@ -217,20 +202,16 @@ namespace StrawberryClient.Model
                 {
                     chatCommand = chatCommand,
                     friendsName = name,
-                    friendsStatus = name,
-                    friendsImage = GetImage(name),
                     viewProfileCommand = viewProfileCommand,
                 });
             }));
 
-            SocketConnection.GetInstance().isRun = true;
-
+            GetImage(name, collectionName.friendsList);
         }
 
         // 채팅방 목록 추가
         public void addRooms(string name)
         {
-            SocketConnection.GetInstance().isRun = false;
             var item = chatRoomsList.FirstOrDefault(e => e.roomName == name);
 
             // 중복 추가 방지
@@ -242,13 +223,26 @@ namespace StrawberryClient.Model
                     {
                         roomCommand = chatCommand,
                         roomName = name,
-                        roomImage = GetImage(name.Split(',')[0]),
                     });
                 }));
+
+                GetImage(name.Split(',')[0], collectionName.chatRoomList);
             }
 
+        }
 
-            SocketConnection.GetInstance().isRun = true;
+        // 전체 이미지 새로고침
+        public void Refresh()
+        {
+            GetImage(userId, collectionName.UserImage);
+
+            DispatcherService.Invoke((System.Action)(() =>
+            {
+                for (int i = 0; i < friendsList.Count; i++)
+                {
+                    GetImage(friendsList[i].friendsName, collectionName.friendsList);
+                }
+            }));
         }
 
         // 알람
@@ -290,13 +284,10 @@ namespace StrawberryClient.Model
         {
             if (string.IsNullOrEmpty(data)) { return; }
 
-            SocketConnection.GetInstance().isRun = false;
-
             // 친구 목록이 비었을 때
             if (data == "<NEXT>")
             {
-                UserImage = GetImage(userId);
-                SocketConnection.GetInstance().isRun = true;
+                GetImage(userId, collectionName.UserImage);
                 return;
             }
 
@@ -305,7 +296,7 @@ namespace StrawberryClient.Model
             string[] roomName = usersData[1].Split(',');
 
             // 내 프사 추가
-            UserImage = GetImage(userId);
+            GetImage(userId, collectionName.UserImage);
 
             if(!string.IsNullOrEmpty(friendsName[0]))
             {
@@ -316,9 +307,11 @@ namespace StrawberryClient.Model
                     {
                         chatCommand = chatCommand,
                         friendsName = i,
-                        friendsImage = GetImage(i),
                         viewProfileCommand = viewProfileCommand,
                     });
+
+
+                    GetImage(i, collectionName.friendsList);
                 }
 
             }
@@ -341,32 +334,35 @@ namespace StrawberryClient.Model
                     }
 
                     tempRoomName = string.Join(",", filteredRoomName);
-                    
 
                     chatRoomsList.Add(new ChatRooms()
                     {
                         roomName = tempRoomName,
-                        roomImage = GetImage(tempRoomName),  // 단톡 이미지 빵꾸 코드
                         roomCommand = chatCommand,
                     });
 
+                    GetImage(tempRoomName, collectionName.chatRoomList);
                     filteredRoomName.Clear();
                 }
             }
             
-            SocketConnection.GetInstance().isRun = true;
         }
 
 
         // 프로필 이미지 가져오기
-        public ImageSource GetImage(string userId)
+        public void GetImage(string userId, Enum collectionName)
         {
+            imageWait.Enqueue(userId + "/" + collectionName.ToString());
+
             SocketConnection.GetInstance().Send("Image", userId);
 
-            byte[] byteImage = SocketConnection.GetInstance().ImageReceive();
+        }
+
+        private void ImageRecv(byte[] image)
+        {
             ImageSourceConverter c = new ImageSourceConverter();
 
-            using (MemoryStream inStream = new MemoryStream(byteImage))
+            using (MemoryStream inStream = new MemoryStream(image, 4, image.Length - 4))
             {
                 using (MemoryStream outStream = new MemoryStream())
                 {
@@ -374,10 +370,31 @@ namespace StrawberryClient.Model
                     tempImage.Save(outStream, ImageFormat.Jpeg);
                     tempImage.Dispose();
 
-                    return (ImageSource)c.ConvertFrom(outStream.ToArray());
+                    string[] pop = imageWait.Dequeue().Split('/');
+                    string userId = pop[0];
+                    string waitClass = pop[1];
+
+                    Console.WriteLine(userId + waitClass);
+                    if (waitClass == collectionName.UserImage.ToString())
+                    {
+                        UserImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
+                        changed("userImage");
+                    }
+
+                    else if(waitClass == collectionName.friendsList.ToString())
+                    {
+                        friendsList.FirstOrDefault(e => e.friendsName == userId).friendsImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
+                        changed("friendsList");
+                    }
+
+                    else if(waitClass == collectionName.chatRoomList.ToString())
+                    {
+                        chatRoomsList.FirstOrDefault(e => e.roomName == userId).roomImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
+                        changed("chatRoomsList");
+                    }
+                   
                 }
             }
-
         }
     }
 }

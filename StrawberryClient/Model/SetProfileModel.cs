@@ -58,7 +58,7 @@ namespace StrawberryClient.Model
                         image.Save(ms, jpgEncoder, parameters);
                     }
                     
-                    SocketConnection.GetInstance().ImageSend(ms.ToArray(), userId);
+                    SocketConnection.GetInstance().ImageSend(ms.ToArray());
 
                     image.Dispose();
                     param.Dispose();

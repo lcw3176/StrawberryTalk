@@ -146,12 +146,13 @@ namespace StrawberryClient.ViewModel
         public void Init(string roomName, string userId, string showedRoomName, ImageSource image, Dictionary<string, ImageSource> friendsImage)
         {
             AttachSocket();
-            SocketConnection.GetInstance().Send("Room", roomName);
             this.roomName = roomName;
             this.userId = userId;
             this.showedRoomName = showedRoomName;
             profileImage = image;
             this.friendsImage = friendsImage;
+
+            SocketConnection.GetInstance().Send("Room", roomName);
 
             roomView = new ChatRoomView();
             roomView.DataContext = this;

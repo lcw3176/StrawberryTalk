@@ -15,7 +15,7 @@ namespace StrawberryServer.routes
     {
         private string userId { get; set; }
         private Socket socket;
-
+        enum packetType { Text,Image};
         
         public Index(Socket socket)
         {
@@ -38,18 +38,18 @@ namespace StrawberryServer.routes
                     {
                         string userInfo = Query.GetInstance().GetUserLoginSuccess(userId);
                         RoomManager.GetInstance().AddUser(userId, socket);
-                        return Encoding.UTF8.GetBytes(userInfo);
+                        return Process(userInfo);
                     }
 
                     else
                     {
-                        return Encoding.UTF8.GetBytes("already");
+                        return Process("already");
                     }
 
                 }
             }
 
-            return Encoding.UTF8.GetBytes("false");
+            return Process("false");
         }
 
         public byte[] Join(string param)
@@ -59,12 +59,12 @@ namespace StrawberryServer.routes
 
             if (Query.GetInstance().SetUser(userId, userPw))
             {
-                return Encoding.UTF8.GetBytes("true");
+                return Process("true");
             }
 
             else
             {
-                return Encoding.UTF8.GetBytes("false");
+                return Process("false");
             }
         }
 
@@ -78,7 +78,7 @@ namespace StrawberryServer.routes
                 Query.GetInstance().SetFriend(userId, findUser);
             }
 
-            return Encoding.UTF8.GetBytes("<FIND>" + result);
+            return Process("<FIND>" + result);
         }
 
         public byte[] Room(string param)
@@ -90,7 +90,7 @@ namespace StrawberryServer.routes
             {
                 Query.GetInstance().SetRoom(roomName);
 
-                return Encoding.UTF8.GetBytes("<FIRST>");
+                return Process("<FIRST>");
             }
 
             // 존재하는 채팅방 메세지 불러오기
@@ -99,7 +99,7 @@ namespace StrawberryServer.routes
                 List<string> data = Query.GetInstance().GetMessage(roomName);
                 string sendData = string.Join("&", data);
                 // 방 이름을 앞에 달아서 보내주기
-                return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+                return Process(roomName + "<AND>" + sendData);
             }
         }
 
@@ -114,7 +114,8 @@ namespace StrawberryServer.routes
             string sendData = string.Join("&", fromUserName, msg) + "<CHAT>";
             
             RoomManager.GetInstance().EchoRoomUsers(roomName, fromUserName, sendData);
-            return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+
+            return Process(roomName + "<AND>" + sendData);
         }
 
         public byte[] Message(string param)
@@ -125,13 +126,13 @@ namespace StrawberryServer.routes
             List<string> data = Query.GetInstance().GetMessage(roomName, pageNation);
             string sendData = string.Join("&", data) + "<PLUS>";
 
-            return Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+            return Process(roomName + "<AND>" + sendData);
         }
 
 
         public byte[] Image(string param)
-        {            
-            string userId = param.Split(',')[0];
+        {
+            string userId = param;
 
             string imagePath = Query.GetInstance().GetImageFromUser(userId);
 
@@ -140,22 +141,17 @@ namespace StrawberryServer.routes
                 Image image = System.Drawing.Image.FromFile(imagePath);
                 image.Save(ms, ImageFormat.Jpeg);
                 image.Dispose();
-                return ms.ToArray();
+
+                return Process(ms.ToArray());
             }
         }
      
 
-        public byte[] MyImage(string param)
+        public byte[] MyImage(byte[] Image)
         {
-            int len = int.Parse(param);
-
-            byte[] byteImage = new byte[len];
-
             string path = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\" + userId + ".jpg";
 
-            socket.Receive(byteImage);
-
-            using (MemoryStream ms = new MemoryStream(byteImage))
+            using (MemoryStream ms = new MemoryStream(Image, 11, Image.Length - 11))
             {
                 Image image = System.Drawing.Image.FromStream(ms);
                 image.Save(path, ImageFormat.Jpeg);
@@ -164,14 +160,39 @@ namespace StrawberryServer.routes
 
             Query.GetInstance().SetImage(userId, path);
 
-            return Encoding.UTF8.GetBytes("<RFRH>");
+            return Process("<RFRH>");
         }
 
         public byte[] DefaultImage(string param)
         {
             Query.GetInstance().SetImage(userId, null);
 
-            return Encoding.UTF8.GetBytes("<RFRH>");
+            return Process("<RFRH>");
+        }
+
+        private byte[] Process(string data)
+        {
+            byte[] type = BitConverter.GetBytes((int)packetType.Text);
+            byte[] text = Encoding.UTF8.GetBytes(data);
+
+            byte[] send = new byte[type.Length + text.Length];
+
+            type.CopyTo(send, 0);
+            text.CopyTo(send, 4);
+
+            return send;
+        }
+
+        private byte[] Process(byte[] Image)
+        {
+            byte[] type = BitConverter.GetBytes((int)packetType.Image);
+
+            byte[] send = new byte[type.Length + Image.Length];
+
+            type.CopyTo(send, 0);
+            Image.CopyTo(send, 4);
+
+            return send;
         }
     }
 }

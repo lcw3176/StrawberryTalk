@@ -71,9 +71,7 @@ CREATE TABLE user(
         sid integer PRIMARY KEY AUTOINCREMENT,
         name varchar(30) not null,
         password varchar(20) not null,
-        image varchar(40),
-        status varchar(50))
-
+        image varchar(40))
 
 </pre>
 </code>

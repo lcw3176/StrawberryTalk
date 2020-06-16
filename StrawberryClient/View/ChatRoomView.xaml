@@ -77,10 +77,10 @@
                                                         Value="Collapsed"/>
                                             </DataTrigger>
 
-                                            <DataTrigger Binding="{Binding sameBefore}" Value="true">
+                                            <!--<DataTrigger Binding="{Binding sameBefore}" Value="true">
                                                 <Setter Property="Visibility"
                                                         Value="Hidden"/>
-                                            </DataTrigger>
+                                            </DataTrigger>-->
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
@@ -97,10 +97,10 @@
                                                         Value="Collapsed"/>
                                                 </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding sameBefore}" Value="true">
+                                                <!--<DataTrigger Binding="{Binding sameBefore}" Value="true">
                                                     <Setter Property="Visibility"
                                                         Value="Hidden"/>
-                                                </DataTrigger>
+                                                </DataTrigger>-->
                                             </Style.Triggers>
                                         </Style>
                                     </Image.Style>
@@ -125,10 +125,10 @@
                                                         Value="Collapsed"/>
                                                 </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding sameBefore}" Value="true">
+                                                <!--<DataTrigger Binding="{Binding sameBefore}" Value="true">
                                                     <Setter Property="Visibility"
                                                         Value="Collapsed"/>
-                                                </DataTrigger>
+                                                </DataTrigger>-->
                                             </Style.Triggers>
                                         </Style>
                                     </TextBlock.Style>

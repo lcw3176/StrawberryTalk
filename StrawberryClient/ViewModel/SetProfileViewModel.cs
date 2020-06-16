@@ -13,7 +13,7 @@ namespace StrawberryClient.ViewModel
     class SetProfileViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        private int maxProfileSize = 1024 * 2000;
+        private int maxProfileSize = 1024 * 1000;
         SetProfileModel setProfileModel;
         public ICommand resetPictureCommand { get; set; }
         public ICommand findPictureCommand { get; set; }

@@ -11,7 +11,6 @@ namespace StrawberryClient.Model.ObservableCollection
         public ICommand chatCommand { get; set; }
         public ICommand checkCommand { get; set; }
         public string friendsName { get; set; }
-        public string friendsStatus { get; set; }
         public ImageSource friendsImage
         {
             get { return FriendImage; }
