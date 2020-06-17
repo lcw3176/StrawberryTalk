@@ -381,7 +381,8 @@ namespace StrawberryServer.DataBase
 
         // 채팅 메세지 기록
         public void SetMessage(string roomName, string fromUserName, string msg)
-        {            
+        {
+            msg = msg.Replace("'", "\''");
             string sql = string.Format("" +
                 "INSERT INTO message(roomName, fromUserName, message) " +
                 "VALUES('{0}', '{1}', '{2}')", roomName, fromUserName, msg);
