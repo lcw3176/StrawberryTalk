@@ -35,6 +35,12 @@ namespace StrawberryClient.Command
                 LoginViewModel login = new LoginViewModel();
                 viewModel.SelectedViewModel = login;
             }
+
+            if(parameter.ToString() == "Auth")
+            {
+                AuthViewModel auth = new AuthViewModel();
+                viewModel.SelectedViewModel = auth;
+            }
         }
 
         public void Execute(object parameter, string userId, string result)

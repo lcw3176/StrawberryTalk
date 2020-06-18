@@ -50,7 +50,7 @@ namespace StrawberryClient.ViewModel
 
             else
             {
-                MessageBox.Show("가입 완료! 로그인을 진행해 주세요.");
+                MessageBox.Show("가입 완료! 인증을 완료하셔야 이용 가능합니다.");
                 UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
                 update.Execute(obj);
             }

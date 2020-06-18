@@ -160,27 +160,34 @@ namespace StrawberryServer.DataBase
         }
 
 
-
-
-
         // user 이미지 가져오기
         public string GetImagePath(string userId)
         {
-            string sql = string.Format("SELECT image FROM user WHERE name = '{0}'", userId);
+            
             string imagePath = string.Empty;
-            
-            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
-            SQLiteDataReader reader = cmd.ExecuteReader();
-            
-            while (reader.Read())
+
+            if(userId.Split(',').Length < 2)
             {
-                imagePath = reader["image"].ToString();
+                string sql = string.Format("SELECT image FROM user WHERE name = '{0}'", userId);
+                SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+                SQLiteDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    imagePath = reader["image"].ToString();
+                }
+
+                reader.Close();
+                cmd.Dispose();
             }
 
-            reader.Close();
-            cmd.Dispose();
+            else
+            {
+                imagePath = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\groupChat.jpg";
+            }
 
             return imagePath;
+
 
         }
 
@@ -333,40 +340,37 @@ namespace StrawberryServer.DataBase
         }
 
         // 유저 회원가입
-        public bool SetUser(string userId, string userPw)
+        public void SetUser(string userId, string userPw)
         {
             string userImage = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\default.jpg";
+            //string sql = string.Format("" +
+            //    "SELECT name " +
+            //    "FROM user " +
+            //    "WHERE name = '{0}'", userId);
+
+            //SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            //SQLiteDataReader reader = cmd.ExecuteReader();
+
+            //while(reader.Read())
+            //{
+            //    if(reader["name"] != null)
+            //    {
+            //        cmd.Dispose();
+            //        reader.Close();
+            //        return false;
+            //    }
+            //}
+
             string sql = string.Format("" +
-                "SELECT name " +
-                "FROM user " +
-                "WHERE name = '{0}'", userId);
-
-            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
-            SQLiteDataReader reader = cmd.ExecuteReader();
-
-            while(reader.Read())
-            {
-                if(reader["name"] != null)
-                {
-                    cmd.Dispose();
-                    reader.Close();
-                    return false;
-                }
-            }
-
-            sql = string.Format("" +
                 "INSERT INTO " +
                 "user(name, password, image) " +
                 "VALUES('{0}', '{1}', '{2}')", userId, userPw, userImage);
             
-            cmd = new SQLiteCommand(sql, conn);
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
 
 
             cmd.Dispose();
-            reader.Close();
-
-            return true;
 
         }
 

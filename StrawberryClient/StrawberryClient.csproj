@@ -65,6 +65,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\AddChatModel.cs" />
+    <Compile Include="Model\AuthModel.cs" />
     <Compile Include="Model\ChatRoomModel.cs" />
     <Compile Include="Model\DispatcherService.cs" />
     <Compile Include="Model\HomeModel.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Model\ObservableCollection\MessageList.cs" />
     <Compile Include="Model\SetProfileModel.cs" />
     <Compile Include="ViewModel\AddChatViewModel.cs" />
+    <Compile Include="ViewModel\AuthViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\ChatRoomViewModel.cs" />
     <Compile Include="ViewModel\HomeViewModel.cs" />
@@ -85,6 +87,9 @@
     </Compile>
     <Compile Include="View\AlarmView.xaml.cs">
       <DependentUpon>AlarmView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AuthView.xaml.cs">
+      <DependentUpon>AuthView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ChatRoomView.xaml.cs">
       <DependentUpon>ChatRoomView.xaml</DependentUpon>
@@ -115,6 +120,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\AlarmView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AuthView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

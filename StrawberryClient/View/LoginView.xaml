@@ -6,24 +6,27 @@
              xmlns:local="clr-namespace:StrawberryClient.View"
              mc:Ignorable="d" 
   d:DesignHeight="600" d:DesignWidth="400">
-    <Grid>
+    <Grid Background="White">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
+            
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <Image Grid.Row="0"
                Grid.ColumnSpan="3"
-               Margin="10"
+               Margin="20"
                Source="../Resource/Images/title.png"/>
 
         <Image Grid.Row="1"
@@ -32,26 +35,27 @@
                Source="../Resource/Images/logo.png"/>
 
         <Label Grid.Row="2" 
-               Grid.Column="0" 
-               Content="ID:" 
-               FontSize="25" 
-               HorizontalAlignment="Right"/>
+               Grid.Column="1" 
+               Content="ID" 
+               FontSize="18" 
+               HorizontalAlignment="Left"
+               VerticalAlignment="Center"/>
 
-        <TextBox Grid.Row="2" 
+        <TextBox Grid.Row="3" 
                  Grid.Column="1" 
-                 FontSize="25" 
+                 FontSize="20" 
                  Margin="5"
                  Text="{Binding userId, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Label Grid.Row="3"
-               Grid.Column="0"
-               Content="PW:"
-               FontSize="25"
-               HorizontalAlignment="Right"/>
+        <Label Grid.Row="4"
+               Grid.Column="1"
+               Content="PW"
+               FontSize="18"
+               HorizontalAlignment="Left"/>
 
-        <TextBox Grid.Row="3"
+        <TextBox Grid.Row="5"
                  Grid.Column="1"
-                 FontSize="25"
+                 FontSize="20"
                  Margin="5"
                  Text="{Binding userPw, UpdateSourceTrigger=PropertyChanged}">
             <TextBox.InputBindings>
@@ -61,7 +65,7 @@
             </TextBox.InputBindings>
         </TextBox>
 
-        <Button Grid.Row="4"
+        <Button Grid.Row="6"
                 Grid.Column="1"
                 Content="Log-In"
                 FontSize="25"
@@ -69,7 +73,7 @@
                 Command="{Binding loginCommand}"
                 CommandParameter="Home"/>
 
-        <Button Grid.Row="5"
+        <Button Grid.Row="7"
                 Grid.Column="2"
                 Content="Sign-up"
                 VerticalAlignment="Top"

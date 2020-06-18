@@ -83,6 +83,8 @@ CREATE TABLE user(
 |-----------|--------|
 |로그인|Login/{id,pw}|
 |회원가입|Join/{id,pw}|
+|계정 인증번호 요청|Auth/{set}|
+|계정 인증번호 비교(최종승인)|Auth/{authNumber}|
 |유저 검색|User/{id}|
 |채팅방 메세지 로드|Room/{roomName}|
 |채팅 Echo|Chat/{roomName, id, message}|

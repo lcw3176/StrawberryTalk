@@ -15,6 +15,7 @@ namespace StrawberryServer.routes
     {
         private string userId { get; set; }
         private Socket socket;
+        private Auth auth;
         enum packetType { Text,Image};
         
         public Index(Socket socket)
@@ -35,6 +36,8 @@ namespace StrawberryServer.routes
                 {
                     string userInfo = Query.GetInstance().GetUserInfo(userId);
                     RoomManager.GetInstance().AddUser(userId, socket);
+
+                    Console.WriteLine(userInfo);
                     return Process(userInfo);
                 }
             
@@ -53,7 +56,35 @@ namespace StrawberryServer.routes
             userId = param.Split(',')[0];
             string userPw = param.Split(',')[1];
 
-            if (Query.GetInstance().SetUser(userId, userPw))
+            string isExist = Query.GetInstance().GetUser(userId);
+
+            if(string.IsNullOrEmpty(isExist))
+            {
+                Query.GetInstance().SetUser(userId, userPw);
+                return Process("true");
+            }
+
+            else
+            {
+                return Process("false");
+            }
+        }
+
+        public byte[] Auth(string param)
+        {
+            string request = param;
+
+            if(request == "set")
+            {
+                auth = new Auth();
+                auth.SetAuthNumber();
+                auth.SendMail(userId);
+
+                return Process("true");
+            }
+
+
+            if (auth.CompareAuthNumber(int.Parse(request)))
             {
                 return Process("true");
             }
@@ -133,8 +164,7 @@ namespace StrawberryServer.routes
 
         public byte[] Image(string param)
         {
-            // 단톡일 경우 맨 앞사람 프사로 갖다줌
-            string userId = param.Split(',')[0];
+            string userId = param;
 
             string imagePath = Query.GetInstance().GetImagePath(userId);
 

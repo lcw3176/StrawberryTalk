@@ -69,7 +69,7 @@
                 Content="Submit"
                 FontSize="20"
                 Command="{Binding joinCommand}"
-                CommandParameter="Login"
+                CommandParameter="Auth"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Stretch"
                 Margin="10"/>

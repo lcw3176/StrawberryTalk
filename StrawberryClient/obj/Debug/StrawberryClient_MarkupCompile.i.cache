@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 D:\project\Cs\StrawberryTalk\StrawberryClient\App.xaml
-81317352489
+91215466529
 
-34-1534958116
+371119076127
 141183416626
-MainWindow.xaml;View\AddChatView.xaml;View\AlarmView.xaml;View\ChatRoomView.xaml;View\HomeView.xaml;View\JoinView.xaml;View\LoginView.xaml;View\SetProfileView.xaml;
+MainWindow.xaml;View\AddChatView.xaml;View\AlarmView.xaml;View\AuthView.xaml;View\ChatRoomView.xaml;View\HomeView.xaml;View\JoinView.xaml;View\LoginView.xaml;View\SetProfileView.xaml;
 
 False
 

@@ -113,12 +113,13 @@ namespace StrawberryClient.Model
             }
         }
 
-        // 로그인 시 잠깐 씀
+        // 로그인 완료 전에 씀
         public string LoginRecv()
         {
 
             byte[] recv;
-               
+            string data = string.Empty;
+
             try
             {
                 byte[] recvSize = new byte[4];
@@ -127,10 +128,8 @@ namespace StrawberryClient.Model
                 int dataSize = BitConverter.ToInt32(recvSize, 0);
                 recv = new byte[dataSize];
 
-                data = null;
-
-                int bytesRec = GetSocket().Receive(recv);
-                data = Encoding.UTF8.GetString(recv, 4, bytesRec - 4);
+                GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
+                data = Encoding.UTF8.GetString(recv, 4, recv.Length - 4);
                 
                 
                 return data;

@@ -226,7 +226,7 @@ namespace StrawberryClient.Model
                     });
                 }));
 
-                GetImage(name.Split(',')[0], collectionName.chatRoomList);
+                GetImage(name, collectionName.chatRoomList);
             }
 
         }
@@ -310,10 +310,8 @@ namespace StrawberryClient.Model
                         viewProfileCommand = viewProfileCommand,
                     });
 
-
                     GetImage(i, collectionName.friendsList);
                 }
-
             }
 
             if(!string.IsNullOrEmpty(roomName[0]))
@@ -355,12 +353,10 @@ namespace StrawberryClient.Model
             imageWait.Enqueue(userId + "/" + collectionName.ToString());
 
             SocketConnection.GetInstance().Send("Image", userId);
-
         }
 
         private void ImageRecv(byte[] image)
         {
-            ImageSourceConverter c = new ImageSourceConverter();
 
             using (MemoryStream inStream = new MemoryStream(image, 4, image.Length - 4))
             {
@@ -373,6 +369,8 @@ namespace StrawberryClient.Model
                     string[] pop = imageWait.Dequeue().Split('/');
                     string userId = pop[0];
                     string waitClass = pop[1];
+
+                    ImageSourceConverter c = new ImageSourceConverter();
 
                     if (waitClass == collectionName.UserImage.ToString())
                     {
@@ -388,6 +386,7 @@ namespace StrawberryClient.Model
 
                     else if(waitClass == collectionName.chatRoomList.ToString())
                     {
+
                         chatRoomsList.FirstOrDefault(e => e.roomName == userId).roomImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
                         changed("chatRoomsList");
                     }
