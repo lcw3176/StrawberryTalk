@@ -105,29 +105,66 @@ namespace StrawberryServer.DataBase
         }
 
         // 유저 로그인
-        public string GetUserLogin()
+        public bool GetUser(string userId, string userPw)
         {
-            string sql = "SELECT name, password FROM user";
-            List<string> data = new List<string>();
+            string sql = string.Format("SELECT name, password FROM user WHERE name = '{0}' AND password = '{1}'", userId, userPw);
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             SQLiteDataReader reader = cmd.ExecuteReader();
 
-            while(reader.Read())
+            while (reader.Read())
             {
-                data.Add(reader["name"].ToString());
-                data.Add(reader["password"].ToString());
+                if (reader["name"].ToString() == userId && reader["password"].ToString() == userPw)
+                {
+                    reader.Close();
+                    cmd.Dispose();
+
+                    return true;
+                }
             }
 
             reader.Close();
             cmd.Dispose();
 
-            return string.Join(",", data);
+            return false;
+        }
+
+        // 특정 유저id 가져오기, 유저 검색 기능에 사용
+        public string GetUser(string id)
+        {
+            string sql = string.Format("SELECT name FROM user WHERE name = '{0}'", id);
+            string name = string.Empty;
+
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                if (reader["name"].ToString() == id)
+                {
+                    name = reader["name"].ToString();
+
+                    reader.Close();
+                    cmd.Dispose();
+
+                    return name;
+                }
+
+            }
+
+            reader.Close();
+            cmd.Dispose();
+
+            return name;
+
         }
 
 
+
+
+
         // user 이미지 가져오기
-        public string GetImageFromUser(string userId)
+        public string GetImagePath(string userId)
         {
             string sql = string.Format("SELECT image FROM user WHERE name = '{0}'", userId);
             string imagePath = string.Empty;
@@ -148,33 +185,9 @@ namespace StrawberryServer.DataBase
         }
 
 
-        // 특정 유저id 가져오기, 유저 검색 기능에 사용
-        public string GetPersonalNameFromUser(string id)
-        {            
-            string sql = string.Format("SELECT name FROM user WHERE name = '{0}'", id);
-            string name = string.Empty;
-            
-            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
-            SQLiteDataReader reader = cmd.ExecuteReader();
-            
-            while (reader.Read())
-            {
-                name = reader["name"].ToString();
-            }
-            
-            if (string.IsNullOrEmpty(name)) { name = "None"; }
-            
-            reader.Close();
-            cmd.Dispose();
-            
-            return name;
-            
-        }
-
-
 
         // 채팅방 이름 가져오기
-        public string GetNameFromRoom(string roomName)
+        public string GetRoom(string roomName)
         {            
             string sql = string.Format("SELECT name FROM room WHERE name = '{0}'", roomName);
             string room = string.Empty;
@@ -184,15 +197,24 @@ namespace StrawberryServer.DataBase
             
             while (reader.Read())
             {
-                room = reader["name"].ToString();
+                if(reader["name"].ToString() == roomName)
+                {
+                    room = reader["name"].ToString();
+
+                    reader.Close();
+                    cmd.Dispose();
+
+                    return room;
+                }
+               
             }
             
             reader.Close();
             cmd.Dispose();
             
-            return room;
-            
+            return room;            
         }
+
 
         // 채팅 메세지 가져오기
         public List<string> GetMessage(string roomName)
@@ -253,7 +275,7 @@ namespace StrawberryServer.DataBase
         }
 
         // 로그인 성공 시 유저 정보 넘기기(친구 목록, 친구 상태 메세지)
-        public string GetUserLoginSuccess(string userId)
+        public string GetUserInfo(string userId)
         {
             List<string> friends = new List<string>();
             List<string> room = new List<string>();
@@ -326,6 +348,8 @@ namespace StrawberryServer.DataBase
             {
                 if(reader["name"] != null)
                 {
+                    cmd.Dispose();
+                    reader.Close();
                     return false;
                 }
             }
@@ -338,6 +362,10 @@ namespace StrawberryServer.DataBase
             cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
 
+
+            cmd.Dispose();
+            reader.Close();
+
             return true;
 
         }
@@ -345,7 +373,7 @@ namespace StrawberryServer.DataBase
         // 채팅방 세팅
         public void SetRoom(string roomName)
         {
-            if (!string.IsNullOrEmpty(GetNameFromRoom(roomName))) { return; }
+            if (!string.IsNullOrEmpty(GetRoom(roomName))) { return; }
             // 단톡방일때 프사도 고려해보자
             // 일단은 단일 유저 단톡방                       
             string sql = string.Format("INSERT INTO room(name) VALUES('{0}')", roomName);
@@ -360,29 +388,28 @@ namespace StrawberryServer.DataBase
         // 프로필 사진 설정
         public void SetImage(string userId, string path)
         {
+            // null 일 경우 default 이미지 경로로 설정
             if(path == null)
             {
                 path = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\default.jpg";
             }
 
-            using (SQLiteConnection conn = new SQLiteConnection(dbPath))
-            {
-                conn.Open();
-                string sql = string.Format(
-                    "UPDATE user " +
-                    "SET image = '{0}' " +
-                    "WHERE name = '{1}'", path, userId);
+            string sql = string.Format(
+                "UPDATE user " +
+                "SET image = '{0}' " +
+                "WHERE name = '{1}'", path, userId);
+            
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
 
-                SQLiteCommand cmd = new SQLiteCommand(sql, conn);
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
         }
 
         // 채팅 메세지 기록
         public void SetMessage(string roomName, string fromUserName, string msg)
         {
             msg = msg.Replace("'", "\''");
+            Console.WriteLine(msg);
             string sql = string.Format("" +
                 "INSERT INTO message(roomName, fromUserName, message) " +
                 "VALUES('{0}', '{1}', '{2}')", roomName, fromUserName, msg);

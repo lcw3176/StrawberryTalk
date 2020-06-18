@@ -71,9 +71,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border BorderBrush="Black"
-                                        BorderThickness="1"
-                                        CornerRadius="20"
+                                <Border CornerRadius="20"
                                         Width="50"
                                         Height="50"                                    
                                         Margin="3"

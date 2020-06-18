@@ -27,26 +27,22 @@ namespace StrawberryServer.routes
             userId = param.Split(',')[0];
             string userPw = param.Split(',')[1];
 
-            string[] userList = Query.GetInstance().GetUserLogin().Split(',');
+            bool isAuth = Query.GetInstance().GetUser(userId, userPw);
 
-            // [0]: 아이디, [1]: 비밀번호
-            for (int i = 0; i < userList.Length; i += 2)
+            if (isAuth)
             {
-                if (userList[i] == userId && userList[i + 1] == userPw)
+                if (RoomManager.GetInstance().CheckUser(userId))
                 {
-                    if (RoomManager.GetInstance().CheckUser(userId))
-                    {
-                        string userInfo = Query.GetInstance().GetUserLoginSuccess(userId);
-                        RoomManager.GetInstance().AddUser(userId, socket);
-                        return Process(userInfo);
-                    }
-
-                    else
-                    {
-                        return Process("already");
-                    }
-
+                    string userInfo = Query.GetInstance().GetUserInfo(userId);
+                    RoomManager.GetInstance().AddUser(userId, socket);
+                    return Process(userInfo);
                 }
+            
+                else
+                {
+                    return Process("already");
+                }
+            
             }
 
             return Process("false");
@@ -71,11 +67,16 @@ namespace StrawberryServer.routes
         public byte[] User(string param)
         {
             string findUser = param;
-            string result = Query.GetInstance().GetPersonalNameFromUser(findUser);
+            string result = Query.GetInstance().GetUser(findUser);
 
-            if (result != "None")
+            if (!string.IsNullOrEmpty(result))
             {
                 Query.GetInstance().SetFriend(userId, findUser);
+            }
+
+            else
+            {
+                result = "None";
             }
 
             return Process("<FIND>" + result);
@@ -86,7 +87,7 @@ namespace StrawberryServer.routes
             string roomName = param;
             
             // 채팅방 없으면 만들기
-            if (string.IsNullOrEmpty(Query.GetInstance().GetNameFromRoom(roomName)))
+            if (string.IsNullOrEmpty(Query.GetInstance().GetRoom(roomName)))
             {
                 Query.GetInstance().SetRoom(roomName);
 
@@ -135,7 +136,7 @@ namespace StrawberryServer.routes
             // 단톡일 경우 맨 앞사람 프사로 갖다줌
             string userId = param.Split(',')[0];
 
-            string imagePath = Query.GetInstance().GetImageFromUser(userId);
+            string imagePath = Query.GetInstance().GetImagePath(userId);
 
             using (MemoryStream ms = new MemoryStream())
             {

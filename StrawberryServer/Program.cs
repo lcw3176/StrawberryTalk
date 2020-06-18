@@ -30,6 +30,10 @@ namespace StrawberryServer
             socket.Bind(new IPEndPoint(IPAddress.Any, 3000));
             Query.GetInstance().Open();
             Query.GetInstance().initTable();
+            Query.GetInstance().SetUser("a", "a");
+            Query.GetInstance().SetUser("b", "b");
+            Query.GetInstance().SetUser("c", "c");
+            Query.GetInstance().SetUser("d", "d");
 
             socket.Listen(10);
 

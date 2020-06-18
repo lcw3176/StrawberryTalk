@@ -52,7 +52,7 @@ namespace StrawberryClient.Model
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 2580)); 
+                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000)); 
             }            
         }
 

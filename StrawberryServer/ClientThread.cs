@@ -52,7 +52,7 @@ namespace StrawberryServer
                     {
                         string data = Encoding.UTF8.GetString(recv, 4, recvLen - 4);
                         router = data.Split('/')[0];
-                        param = data.Split('/')[1];
+                        param = data.Replace(router + "/", string.Empty);
 
                         Console.WriteLine(data);
 

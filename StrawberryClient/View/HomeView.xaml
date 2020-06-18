@@ -194,9 +194,10 @@
                                     <Border Margin="3"
                                             HorizontalAlignment="Center"
                                             Width="60"
-                                            BorderBrush="Black"
-                                            BorderThickness="1"
                                             CornerRadius="20">
+                                            <!--BorderBrush="Black"
+                                            BorderThickness="1"-->
+                                            
 
                                         <Border.Background>
                                             <ImageBrush Stretch="UniformToFill" 
@@ -259,9 +260,7 @@
                                                     </Style>
                                                 </StackPanel.Resources>
 
-                                                <Border BorderBrush="Black"
-                                                        BorderThickness="1"
-                                                        CornerRadius="20"
+                                                <Border CornerRadius="20"
                                                         Width="60"
                                                         Margin="3"
                                                         HorizontalAlignment="Center">
@@ -325,21 +324,19 @@
                                                         </Style>
                                                     </StackPanel.Resources>
 
-                                                <Border BorderBrush="Black"
-                                                        BorderThickness="2"
-                                                        CornerRadius="3"
-                                                        Margin="3">
-                                                    
+                                                <Border CornerRadius="20"
+                                                        Margin="3"
+                                                        Width="60"
+                                                        HorizontalAlignment="Center">
+
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding roomImage, UpdateSourceTrigger=PropertyChanged}"
+                                                                    Stretch="UniformToFill"/>
+                                                    </Border.Background>
                                                     <Button Background="Transparent"
                                                         BorderThickness="0"
                                                         Style="{StaticResource MyButtonStyle}">
 
-                                                        <Image Grid.Column="0" 
-                                                               HorizontalAlignment="Center"                        
-                                                               Width="60"
-                                                               Stretch="UniformToFill"
-                                                               Source="{Binding roomImage, UpdateSourceTrigger=PropertyChanged}">
-                                                        </Image>
                                                     </Button>
                                                 </Border>
                   
@@ -349,9 +346,6 @@
                                                     <TextBlock x:Name="room"
                                                             Text="{Binding roomName}" 
                                                             FontSize="18"/>
-                                                    <!--<TextBlock Text="{Binding friendsStatus}" 
-                                                               Foreground="Gray"
-                                                               FontSize="10"/>-->
 
                                                 </StackPanel>
 
