@@ -20,7 +20,7 @@ namespace StrawberryClient.Model
         private string showedRoomName;
         private string userId;
         private string inputMessage = string.Empty;
-        private int pageNation = 1;
+        private int pageNation = 2;
         private ImageSource profileImage;
         private Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
         ObservableCollection<MessageList> messageList = new ObservableCollection<MessageList>();
@@ -33,7 +33,7 @@ namespace StrawberryClient.Model
 
         public ObservableCollection<MessageList> MessageList
         {
-            get { return new ObservableCollection<MessageList>(messageList.Reverse());}
+            get { return messageList; }
             set { messageList = value; }
         }
 
@@ -80,7 +80,8 @@ namespace StrawberryClient.Model
         public void DetachAlarm()
         {
             SocketConnection.GetInstance().Recv -= new SocketConnection.Receive(Receive);
-            messageList.Clear();
+            MessageList = null;
+            FriendsImage = null;
         }
 
         // 메세지 전송
@@ -95,7 +96,7 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().Send("Message", roomName, pageNation.ToString());
         }
 
-        string isSame = string.Empty;
+        //string isSame = string.Empty;
 
         // [0] fromUserName [1] msg
         private void Receive(string param)
@@ -130,8 +131,8 @@ namespace StrawberryClient.Model
                             {
                                 userName = result[i],
                                 message = result[i + 1],
-                                isMe = (result[i] == userId),
-                                sameBefore = (isSame == result[i]),
+                                isMe = true,
+                                //sameBefore = (isSame == result[i]),
                             });
                         }
 
@@ -141,15 +142,16 @@ namespace StrawberryClient.Model
                             {
                                 userName = result[i],
                                 message = result[i + 1],
-                                isMe = (result[i] == userId),
-                                sameBefore = (isSame == result[i]),
+                                isMe = false,
+                                //sameBefore = (isSame == result[i]),
                                 profileImage = friendsImage[result[i]],
                             });
                         }
 
-                        isSame = result[i];
-                    }
+                        //isSame = result[i];
 
+                        messageList.Move(messageList.Count - 1, 0);
+                    }
                    
                 }));
 
@@ -168,21 +170,23 @@ namespace StrawberryClient.Model
                         return;
                     }
 
-                    for (int i = 0;i < result.Length; i++)
+
+                    for (int i = result.Length - 1;i >= 0; i--)
                     {
                         temp = result[i].Split(',');
 
+                        Console.WriteLine(temp[1]);
                         // is Me
-                        if(userId == temp[0])
+                        if (userId == temp[0])
                         {
                             messageList.Add(new MessageList()
                             {
                                 userName = temp[0],
                                 message = temp[1],
-                                isMe = (temp[0] == userId),
-                                sameBefore = (isSame == result[i].Split(',')[0]),
+                                isMe = true,
+                                //sameBefore = (isSame == temp[0]),
                             });
-
+                            
                         }
 
                         else
@@ -191,14 +195,13 @@ namespace StrawberryClient.Model
                             {
                                 userName = temp[0],
                                 message = temp[1],
-                                isMe = (temp[0] == userId),
-                                sameBefore = (isSame == result[i].Split(',')[0]),
+                                isMe = false,
+                                //sameBefore = (isSame == temp[0]),
                                 profileImage = friendsImage[temp[0]],
                             });
 
                         }
-
-                        isSame = temp[0];
+                        //isSame = temp[0];
                     }
 
                 }));
@@ -216,10 +219,11 @@ namespace StrawberryClient.Model
 
                 string[] temp;
 
-                for (int i = 0; i < result.Length; i++)
+                for (int i = result.Length - 1; i >= 0; i--)
                 {
                     temp = result[i].Split(',');
 
+                    Console.WriteLine(temp[1]);
                     DispatcherService.Invoke((System.Action)(() =>
                     {
                         // is Me
@@ -229,8 +233,8 @@ namespace StrawberryClient.Model
                             {
                                 userName = temp[0],
                                 message = temp[1],
-                                isMe = (temp[0] == userId),
-                                sameBefore = (isSame == result[i].Split(',')[0]),
+                                isMe = true,
+                                //sameBefore = (isSame == temp[0]),
                             });
                         }
 
@@ -240,19 +244,21 @@ namespace StrawberryClient.Model
                             {
                                 userName = temp[0],
                                 message = temp[1],
-                                isMe = (temp[0] == userId),
-                                sameBefore = (isSame == result[i].Split(',')[0]),
+                                isMe = false,
+                                //sameBefore = (isSame == temp[0]),
                                 profileImage = friendsImage[temp[0]],
                             });
                         }
 
-                    }));
-
-                    isSame = temp[0];
+                        //isSame = temp[0];
+                    }));                    
                 }
             }
 
+            //isSame = string.Empty;
+
             update("messageList");
         }
+
     }
 }

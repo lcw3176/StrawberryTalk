@@ -107,22 +107,24 @@ namespace StrawberryClient.ViewModel
         {
             chatRoomModel.DetachAlarm();
         }
-
         double height;
 
         // 스크롤 끝까지 당겼을 때 메세지 추가 요청
-        public void scrollEnd()
+        public void scrollEnd(double height)
         {
-            height = scroll.ScrollableHeight;
+            this.height = height;
             chatRoomModel.MoreMessage();
         }
+
+ 
 
         // 메세지 추가 로딩 후 스크롤 위치 이동
         private void MoveScrollToMiddle()
         {
+
             DispatcherService.Invoke((System.Action)(() =>
             {
-                scroll.ScrollToVerticalOffset(height);
+                scroll.ScrollToVerticalOffset(this.height);
             }));
         }
 
@@ -182,5 +184,6 @@ namespace StrawberryClient.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
     }
 }

@@ -39,12 +39,12 @@ namespace StrawberryServer
                 try
                 {
                     byte[] recvSize = new byte[4];
-                    socket.Receive(recvSize);
+                    socket.Receive(recvSize, 0, 4, SocketFlags.None);
 
                     int dataSize = BitConverter.ToInt32(recvSize, 0);
                     recv = new byte[dataSize];
 
-                    int recvLen = socket.Receive(recv);
+                    int recvLen = socket.Receive(recv, 0, dataSize, SocketFlags.None);
                     dataType = BitConverter.ToInt32(recv, 0);
 
                     // 텍스트 전송
@@ -66,6 +66,7 @@ namespace StrawberryServer
                     {
                         router = Encoding.UTF8.GetString(recv, 4, 7);
 
+                        Console.WriteLine(router);
                         Type type = index.GetType();
                         MethodInfo routes = type.GetMethod(router, BindingFlags.Instance | BindingFlags.Public);
                         byteData = (byte[])routes.Invoke(index, new object[] { recv });
@@ -74,16 +75,14 @@ namespace StrawberryServer
                     byte[] sendSize;
 
                     sendSize = BitConverter.GetBytes(byteData.Length);
-                    socket.Send(sendSize);
+                    socket.Send(sendSize, 0, 4, SocketFlags.None);
 
-                    int sendLen = 0;
+                    Thread.Sleep(10);
 
-                    while (byteData.Length / 2 >= sendLen)
-                    {
-                        sendLen += socket.Send(byteData);
-                    }
+                    socket.Send(byteData, 0, byteData.Length, SocketFlags.None);
 
-                    Array.Clear(recv, 0, recvLen);
+                    Array.Clear(recv, 0, recv.Length);
+                    Array.Clear(byteData, 0, byteData.Length);
                 }
 
                 catch

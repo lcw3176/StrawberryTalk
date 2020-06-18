@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace StrawberryServer
 {
@@ -63,13 +64,24 @@ namespace StrawberryServer
         // 메세지 뿌리기
         public void EchoRoomUsers(string roomName, string fromUserName, string sendData)
         {
-            string temp = roomName.Replace(fromUserName, string.Empty);
-            string[] key = temp.Replace("&&", "&").Trim().Split('&');
+            List<string> key = new List<string>();
+
+            foreach (string i in roomName.Split('&'))
+            {
+                if(i != fromUserName)
+                {
+                    key.Add(i);
+                }
+            }
 
             byte[] type = BitConverter.GetBytes((int)PacketType.Text);
             byte[] text = Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
 
             byte[] send = new byte[type.Length + text.Length];
+
+            byte[] size;
+
+            size = BitConverter.GetBytes(send.Length);
 
             type.CopyTo(send, 0);
             text.CopyTo(send, 4);
@@ -79,6 +91,8 @@ namespace StrawberryServer
                 // 유저 접속 여부 체크
                 if (userDic.TryGetValue(i, out Socket sockTemp))
                 {
+                    userDic[i].Send(size);
+                    Thread.Sleep(10);
                     userDic[i].Send(send);
                 }
 

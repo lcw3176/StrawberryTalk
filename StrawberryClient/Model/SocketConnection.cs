@@ -52,7 +52,7 @@ namespace StrawberryClient.Model
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000)); 
+                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 2580)); 
             }            
         }
 
@@ -72,27 +72,27 @@ namespace StrawberryClient.Model
         // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
-            byte[] recv;
-            int dataType;
 
-            while (true)
+            while (GetSocket().Connected)
             {
                 try
                 {
+
                     byte[] recvSize = new byte[4];
-                    GetSocket().Receive(recvSize);
+                    GetSocket().Receive(recvSize, 0, 4, SocketFlags.None);
 
                     int dataSize = BitConverter.ToInt32(recvSize, 0);
 
-                    recv = new byte[dataSize];
+                    byte[] recv = new byte[dataSize];
 
-                    int bytesRec = GetSocket().Receive(recv);
+                    GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
+
                     
-                    dataType = BitConverter.ToInt32(recv, 0);
+                    int dataType = BitConverter.ToInt32(recv, 0);
                     
                     if(dataType == (int)PacketType.Text)
                     {
-                        data = Encoding.UTF8.GetString(recv, 4, bytesRec - 4);
+                        data = Encoding.UTF8.GetString(recv, 4, recv.Length - 4);
                         Recv(data);                    
                     }
                     
@@ -101,15 +101,14 @@ namespace StrawberryClient.Model
                         imageRecv(recv);
                     }
                     
-                    Array.Clear(recv, 0, recv.Length);
                 }
 
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
-                    GetSocket().Close();
-                    break;
+                    continue;
                 }
+
 
             }
         }
@@ -149,7 +148,6 @@ namespace StrawberryClient.Model
 
         public void ImageSend(byte[] image)
         {
-            int sendLen = 0;
 
             byte[] packetType = BitConverter.GetBytes((int)PacketType.Image);
             byte[] text = Encoding.UTF8.GetBytes("MyImage");
@@ -163,12 +161,13 @@ namespace StrawberryClient.Model
             byte[] size;
 
             size = BitConverter.GetBytes(send.Length);
-            GetSocket().Send(size);
 
-            while (send.Length / 2 >= sendLen)
-            {
-                sendLen += GetSocket().Send(send);
-            }
+            GetSocket().Send(size, 0, 4, SocketFlags.None);
+
+            Thread.Sleep(10);
+
+            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
+
         }
 
         public void Send(string request, params string[] queryString)
@@ -192,16 +191,12 @@ namespace StrawberryClient.Model
             packetType.CopyTo(send, 0);
             text.CopyTo(send, 4);
 
-            int sendLen = 0;
             byte[] size;
 
             size = BitConverter.GetBytes(send.Length);
-            GetSocket().Send(size);
+            GetSocket().Send(size, 0, 4, SocketFlags.None);
+            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
 
-            while (send.Length / 2 >= sendLen)
-            {
-                sendLen += GetSocket().Send(send);
-            }
         }
 
     }

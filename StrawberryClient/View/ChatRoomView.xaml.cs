@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -10,7 +11,7 @@ namespace StrawberryClient.View
     public partial class ChatRoomView : Window
     {
 
-        public delegate void scrollEnd();
+        public delegate void scrollEnd(double height);
         public event scrollEnd endOfScroll;
         private int height = 1100;
 
@@ -27,6 +28,7 @@ namespace StrawberryClient.View
             scrollView.ScrollChanged -= ScrollView_ScrollChanged;
         }
 
+        double before = 1100;
         // 스크롤 끝 감지
         // 메세지 추가 요청
         private void ScrollView_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -35,7 +37,9 @@ namespace StrawberryClient.View
 
             if (scroll.VerticalOffset == 0 && scroll.ScrollableHeight - scroll.VerticalOffset >= height)
             {
-                endOfScroll();
+                endOfScroll(scroll.ScrollableHeight - before);
+
+                before = scroll.ScrollableHeight;
             }
         }
 
@@ -43,5 +47,6 @@ namespace StrawberryClient.View
         {
             this.DragMove();
         }
+
     }
 }

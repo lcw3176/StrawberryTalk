@@ -191,20 +191,22 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <Border BorderBrush="Black"
-                                            BorderThickness="2"
-                                            CornerRadius="3"
-                                            Margin="3">
+                                    <Border Margin="3"
+                                            HorizontalAlignment="Center"
+                                            Width="60"
+                                            BorderBrush="Black"
+                                            BorderThickness="1"
+                                            CornerRadius="20">
+
+                                        <Border.Background>
+                                            <ImageBrush Stretch="UniformToFill" 
+                                                        ImageSource="{Binding userImage, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Border.Background>
+                                        
                                         <Button Background="Transparent"
-                                            BorderThickness="0"
-                                            Style="{StaticResource MyButtonStyle}"
-                                            Command="{Binding setProfileCommand}">
-                                            <Image Grid.Column="0" 
-                                                   HorizontalAlignment="Center"                        
-                                                   Width="60"
-                                                   Stretch="UniformToFill"
-                                                   Source="{Binding userImage, UpdateSourceTrigger=PropertyChanged}">
-                                            </Image>
+                                                BorderThickness="0"
+                                                Style="{StaticResource MyButtonStyle}"
+                                                Command="{Binding setProfileCommand}">
                                         </Button>
                                     </Border>
 
@@ -258,23 +260,22 @@
                                                 </StackPanel.Resources>
 
                                                 <Border BorderBrush="Black"
-                                                        BorderThickness="2"
-                                                        CornerRadius="3"
-                                                        Margin="3">
+                                                        BorderThickness="1"
+                                                        CornerRadius="20"
+                                                        Width="60"
+                                                        Margin="3"
+                                                        HorizontalAlignment="Center">
+
+                                                    <Border.Background>
+                                                        <ImageBrush Stretch="UniformToFill"
+                                                                    ImageSource="{Binding friendsImage, UpdateSourceTrigger=PropertyChanged}"/>
+                                                    </Border.Background>
 
                                                     <Button Background="Transparent"
                                                             BorderThickness="0"
                                                             Style="{StaticResource MyButtonStyle}"
                                                             Command="{Binding viewProfileCommand}"
                                                             CommandParameter="{Binding ElementName=chatRoom}">
-
-                                                        <Image Grid.Column="0" 
-                                                               HorizontalAlignment="Center"                        
-                                                               Width="60"
-                                                               Stretch="UniformToFill"
-                                                               Source="{Binding friendsImage, UpdateSourceTrigger=PropertyChanged}">
-                                                               
-                                                        </Image>
                                                     </Button>
                                                 </Border>
 

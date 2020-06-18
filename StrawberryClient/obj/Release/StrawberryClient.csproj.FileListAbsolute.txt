@@ -28,3 +28,4 @@ D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.cspro
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.csproj.CoreCompileInputs.cache
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.exe
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.pdb
+D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.csprojAssemblyReference.cache

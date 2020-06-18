@@ -231,7 +231,7 @@ namespace StrawberryServer.DataBase
                 "FROM message " +
                 "WHERE roomName = '{0}' " +
                 "ORDER BY sid " +
-                "DESC LIMIT '{1}', '{2}'", roomName, (pageNation) * 30, (pageNation + 1) * 30);
+                "DESC LIMIT '{1}', '{2}'", roomName, (pageNation) * 45, (pageNation + 1) * 45);
 
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);

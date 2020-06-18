@@ -152,7 +152,6 @@ namespace StrawberryClient.ViewModel
         // 채팅 시작 커맨드
         private void chatExecuteMethod(object obj)
         {
-            Console.WriteLine("눌림");
             string showedRoomName;
 
             // 단톡 만들때(addChatView에서 선택시 실행)
