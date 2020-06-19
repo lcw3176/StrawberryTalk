@@ -1,5 +1,6 @@
 ﻿using StrawberryClient.Command;
 using StrawberryClient.Model;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,6 +19,16 @@ namespace StrawberryClient.ViewModel
             {
                 model.UserId = value;
                 OnPropertyUpdate("userId");
+            }
+        }
+
+        public string userNickname
+        {
+            get { return model.UserNickname; }
+            set
+            {
+                model.UserNickname = value;
+                OnPropertyUpdate("userNickname");
             }
         }
 
@@ -41,6 +52,20 @@ namespace StrawberryClient.ViewModel
 
         private void joinExecuteMethod(object obj)
         {
+            bool isMail = Regex.IsMatch(userId, @"(\w+\.)*\w+@(\w+\.)+[A-Za-z]+");
+
+            if(!isMail)
+            {
+                MessageBox.Show("아이디는 이메일 형식이어야 합니다.");
+                return;
+            }
+
+            if(string.IsNullOrEmpty(userNickname.Trim()) || string.IsNullOrEmpty(userId.Trim()) || string.IsNullOrEmpty(userPw.Trim()))
+            {
+                MessageBox.Show("공백입력은 허용되지 않습니다.");
+                return;
+            }
+
             string result = model.TryJoin();
 
             if(result == "false")

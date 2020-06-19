@@ -35,18 +35,18 @@ namespace StrawberryServer
                 userDic.Remove(userId);
             }
 
-            catch(Exception ex)
+            catch
             {
-                Console.WriteLine(ex);
+                Console.WriteLine("로그인에서 접속 종료");
                 return;
             }
 
         }
 
-        public void RemoveUser(string userId)
-        {
-            userDic.Remove(userId);
-        }
+        //public void RemoveUser(string userId)
+        //{
+        //    userDic.Remove(userId);
+        //}
         
         // 중복 로그인 체크
         public bool CheckUser(string userId)

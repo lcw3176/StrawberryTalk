@@ -12,7 +12,7 @@ CREATE TABLE friendsList(
         name varchar(30), 
         friends varchar(30), 
         foreign key(name) 
-        references user(name) 
+        references user(nickname) 
         on update cascade 
         on delete cascade)
 
@@ -70,7 +70,9 @@ CREATE TABLE room(
 CREATE TABLE user(
         sid integer PRIMARY KEY AUTOINCREMENT,
         name varchar(30) not null,
+        nickname varchar(20) not null,
         password varchar(20) not null,
+        auth varchar(5) not null,
         image varchar(40))
 
 </pre>
@@ -83,7 +85,7 @@ CREATE TABLE user(
 |-----------|--------|
 |로그인|Login/{id,pw}|
 |회원가입|Join/{id,pw}|
-|계정 인증번호 요청|Auth/{set}|
+|계정 인증번호 요청|Auth/"set"|
 |계정 인증번호 비교(최종승인)|Auth/{authNumber}|
 |유저 검색|User/{id}|
 |채팅방 메세지 로드|Room/{roomName}|
@@ -91,7 +93,7 @@ CREATE TABLE user(
 |채팅방 메세지 추가 로드|Message/{roomName, pagination}|
 |프로필 사진 불러오기|Image/{id}|
 |내 프로필 사진 설정|MyImage/{ImageByteLength}|
-|프로필 사진 기본으로 변경|DefaultImage/{null}|
+|프로필 사진 기본으로 변경|DefaultImage/"null"}|
 
 ## 작동 방식 및 구현 기능
 ### 클라이언트 
@@ -117,6 +119,11 @@ CREATE TABLE user(
 * 유저 목록 추가, 삭제 담당(Dictionary<아이디, 소켓>)
 * 중복 로그인 체크
 * 알맞은 유저에게 메세지 전송(접속 안되어 있을 시 DB에 기록, 차후 접속 시 확인가능)
+
+#### Auth.cs
+* 회원가입시 유저 이메일 인증 클래스
+* 랜덤으로 6자리 정수 생성, 해당 유저 이메일로 전송
+* 서버id와 pw는 서버 컴퓨터 환경변수에 저장, 필요시 읽어옴
 
 
 

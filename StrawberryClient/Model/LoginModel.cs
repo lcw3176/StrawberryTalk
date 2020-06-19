@@ -54,13 +54,10 @@ namespace StrawberryClient.Model
             }
         }
 
-        public void Send()
+        public string TryLogin()
         {
             SocketConnection.GetInstance().Send("Login", userId, serverPw.ToString());
-        }
 
-        public string Login()
-        {
             return SocketConnection.GetInstance().LoginRecv();
         }
 

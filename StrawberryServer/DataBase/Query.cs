@@ -39,7 +39,9 @@ namespace StrawberryServer.DataBase
             string s1 = "CREATE table user(" +
                 "sid integer PRIMARY KEY AUTOINCREMENT, " +
                 "name varchar(30) not null, " +
+                "nickname varchar(20) not null, " +
                 "password varchar(20) not null, " +
+                "auth varchar(5) not null, " +
                 "image varchar(40))";
 
             string s2 = "CREATE table room(" +
@@ -60,79 +62,71 @@ namespace StrawberryServer.DataBase
                 "name varchar(30), " +
                 "friends varchar(30), " +
                 "foreign key(name) " +
-                "references user(name) " +
+                "references user(nickname) " +
                 "on update cascade " +
                 "on delete cascade)";
 
-            using (SQLiteConnection conn = new SQLiteConnection(dbPath))
-            {
-                conn.Open();
-                SQLiteCommand cmd;
-                string sql;
-                sql = "drop table user";
-                cmd = new SQLiteCommand(sql, conn);
-                cmd.ExecuteNonQuery();
 
-                sql = "drop table message";
-                cmd = new SQLiteCommand(sql, conn);
-                cmd.ExecuteNonQuery();
+            SQLiteCommand cmd;
+            string sql;
+            sql = "drop table user";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
 
-                sql = "drop table room";
-                cmd = new SQLiteCommand(sql, conn);
-                cmd.ExecuteNonQuery();
+            sql = "drop table message";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
 
-                sql = "drop table friendsList";
-                cmd = new SQLiteCommand(sql, conn);
-                cmd.ExecuteNonQuery();
+            sql = "drop table room";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
 
-                cmd = new SQLiteCommand(s1, conn);
-                cmd.ExecuteNonQuery();
+            sql = "drop table friendsList";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
 
-                cmd = new SQLiteCommand(s2, conn);
-                cmd.ExecuteNonQuery();
-
-                cmd = new SQLiteCommand(s3, conn);
-                cmd.ExecuteNonQuery();
-
-                cmd = new SQLiteCommand(s5, conn);
-                cmd.ExecuteNonQuery();
-
-                cmd.Dispose();
-            }
+            cmd = new SQLiteCommand(s1, conn);
+            cmd.ExecuteNonQuery();
+            
+            cmd = new SQLiteCommand(s2, conn);
+            cmd.ExecuteNonQuery();
+            
+            cmd = new SQLiteCommand(s3, conn);
+            cmd.ExecuteNonQuery();
+            
+            cmd = new SQLiteCommand(s5, conn);
+            cmd.ExecuteNonQuery();
+            
+            cmd.Dispose();
 
             Console.WriteLine("Init complete");
 
         }
 
         // 유저 로그인
-        public bool GetUser(string userId, string userPw)
+        public string GetNickname(string userId, string userPw)
         {
-            string sql = string.Format("SELECT name, password FROM user WHERE name = '{0}' AND password = '{1}'", userId, userPw);
+            string sql = string.Format("SELECT nickname FROM user WHERE name = '{0}' AND password = '{1}'", userId, userPw);
+            string nickname = string.Empty;
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             SQLiteDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                if (reader["name"].ToString() == userId && reader["password"].ToString() == userPw)
-                {
-                    reader.Close();
-                    cmd.Dispose();
-
-                    return true;
-                }
+                nickname = reader["nickname"].ToString();
             }
 
             reader.Close();
             cmd.Dispose();
 
-            return false;
+            return nickname;
         }
 
-        // 특정 유저id 가져오기, 유저 검색 기능에 사용
-        public string GetUser(string id)
+        // 특정 유저 닉네임 가져오기, 유저 검색 기능에 사용
+        public string GetNickname(string id)
         {
-            string sql = string.Format("SELECT name FROM user WHERE name = '{0}'", id);
+            string sql = string.Format("SELECT nickname FROM user WHERE nickname = '{0}'", id);
             string name = string.Empty;
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
@@ -140,16 +134,7 @@ namespace StrawberryServer.DataBase
 
             while (reader.Read())
             {
-                if (reader["name"].ToString() == id)
-                {
-                    name = reader["name"].ToString();
-
-                    reader.Close();
-                    cmd.Dispose();
-
-                    return name;
-                }
-
+                name = reader["nickname"].ToString();
             }
 
             reader.Close();
@@ -157,6 +142,26 @@ namespace StrawberryServer.DataBase
 
             return name;
 
+        }
+
+        public bool GetAuth(string userId)
+        {
+            string sql = string.Format("SELECT auth FROM user WHERE name = '{0}'", userId);
+
+            bool auth = false;
+
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            while(reader.Read())
+            {
+                auth = bool.Parse(reader["auth"].ToString());
+            }
+
+            reader.Close();
+            cmd.Dispose();
+
+            return auth;
         }
 
 
@@ -168,7 +173,7 @@ namespace StrawberryServer.DataBase
 
             if(userId.Split(',').Length < 2)
             {
-                string sql = string.Format("SELECT image FROM user WHERE name = '{0}'", userId);
+                string sql = string.Format("SELECT image FROM user WHERE nickname = '{0}'", userId);
                 SQLiteCommand cmd = new SQLiteCommand(sql, conn);
                 SQLiteDataReader reader = cmd.ExecuteReader();
 
@@ -204,16 +209,7 @@ namespace StrawberryServer.DataBase
             
             while (reader.Read())
             {
-                if(reader["name"].ToString() == roomName)
-                {
-                    room = reader["name"].ToString();
-
-                    reader.Close();
-                    cmd.Dispose();
-
-                    return room;
-                }
-               
+                room = reader["name"].ToString();
             }
             
             reader.Close();
@@ -247,8 +243,7 @@ namespace StrawberryServer.DataBase
             reader.Close();
             cmd.Dispose();
             
-            return msg;
-            
+            return msg;            
         }
 
 
@@ -282,7 +277,7 @@ namespace StrawberryServer.DataBase
         }
 
         // 로그인 성공 시 유저 정보 넘기기(친구 목록, 친구 상태 메세지)
-        public string GetUserInfo(string userId)
+        public string GetUserInfo(string userNickname)
         {
             List<string> friends = new List<string>();
             List<string> room = new List<string>();
@@ -290,7 +285,7 @@ namespace StrawberryServer.DataBase
             string sql = string.Format("" +
                 "SELECT friends " +
                 "FROM friendsList " +
-                "WHERE name = '{0}'", userId);
+                "WHERE name = '{0}'", userNickname);
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             SQLiteDataReader reader = cmd.ExecuteReader();
@@ -303,7 +298,7 @@ namespace StrawberryServer.DataBase
             sql = string.Format("" +
                 "SELECT name " +
                 "FROM room " +
-                "WHERE name LIKE '%{0}%'", userId);
+                "WHERE name LIKE '%{0}%'", userNickname);
 
             cmd = new SQLiteCommand(sql, conn);
             reader = cmd.ExecuteReader();
@@ -315,6 +310,9 @@ namespace StrawberryServer.DataBase
 
 
             StringBuilder data = new StringBuilder();
+            data.Append(userNickname);
+            data.Append("<NICK>");
+
             data.Append(string.Join(",", friends));
 
             data.Append("<NEXT>");
@@ -340,31 +338,14 @@ namespace StrawberryServer.DataBase
         }
 
         // 유저 회원가입
-        public void SetUser(string userId, string userPw)
+        public void SetUser(string userId, string userNickname, string userPw)
         {
             string userImage = @"D:\project\Cs\StrawberryTalk\StrawberryServer\Resource\UserImage\default.jpg";
-            //string sql = string.Format("" +
-            //    "SELECT name " +
-            //    "FROM user " +
-            //    "WHERE name = '{0}'", userId);
-
-            //SQLiteCommand cmd = new SQLiteCommand(sql, conn);
-            //SQLiteDataReader reader = cmd.ExecuteReader();
-
-            //while(reader.Read())
-            //{
-            //    if(reader["name"] != null)
-            //    {
-            //        cmd.Dispose();
-            //        reader.Close();
-            //        return false;
-            //    }
-            //}
 
             string sql = string.Format("" +
                 "INSERT INTO " +
-                "user(name, password, image) " +
-                "VALUES('{0}', '{1}', '{2}')", userId, userPw, userImage);
+                "user(name, password, image, nickname, auth) " +
+                "VALUES('{0}', '{1}', '{2}', '{3}', 'false')", userId, userPw, userImage, userNickname);
             
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
@@ -377,15 +358,26 @@ namespace StrawberryServer.DataBase
         // 채팅방 세팅
         public void SetRoom(string roomName)
         {
-            if (!string.IsNullOrEmpty(GetRoom(roomName))) { return; }
-            // 단톡방일때 프사도 고려해보자
-            // 일단은 단일 유저 단톡방                       
+            if (!string.IsNullOrEmpty(GetRoom(roomName))) { return; }                  
             string sql = string.Format("INSERT INTO room(name) VALUES('{0}')", roomName);
             
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
             cmd.Dispose();
 
+        }
+
+        // 유저 인증 세팅
+        public void SetAuth(string userId)
+        {
+            string sql = string.Format("" +
+                "UPDATE user " +
+                "SET auth = 'true' " +
+                "WHERE name = '{0}'", userId);
+
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
         }
 
 
@@ -413,7 +405,7 @@ namespace StrawberryServer.DataBase
         public void SetMessage(string roomName, string fromUserName, string msg)
         {
             msg = msg.Replace("'", "\''");
-            Console.WriteLine(msg);
+
             string sql = string.Format("" +
                 "INSERT INTO message(roomName, fromUserName, message) " +
                 "VALUES('{0}', '{1}', '{2}')", roomName, fromUserName, msg);

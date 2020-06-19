@@ -20,6 +20,8 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="50"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
@@ -49,14 +51,28 @@
                  Margin="10"/>
 
         <TextBlock Grid.Row="3"
+                 Grid.Column="1"
+                 Text=" NickName"
+                 VerticalAlignment="Center"
+                 HorizontalAlignment="Left"
+                 FontSize="20"/>
+
+        <TextBox Grid.Row="4"
+                 Grid.Column="1"
+                 Text="{Binding userNickname, UpdateSourceTrigger=PropertyChanged}"
+                 FontSize="20"
+                 VerticalAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 Margin="10"/>
+
+        <TextBlock Grid.Row="5"
                    Grid.Column="1"
                    Text=" PW"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Left"
                    FontSize="20"/>
 
-
-        <TextBox Grid.Row="4"
+        <TextBox Grid.Row="6"
                  Grid.Column="1"
                  Text="{Binding userPw, UpdateSourceTrigger=PropertyChanged}"
                  FontSize="20"
@@ -64,7 +80,7 @@
                  HorizontalAlignment="Stretch"
                  Margin="10"/>
 
-        <Button Grid.Row="5"
+        <Button Grid.Row="7"
                 Grid.Column="1"
                 Content="Submit"
                 FontSize="20"
@@ -74,7 +90,7 @@
                 HorizontalAlignment="Stretch"
                 Margin="10"/>
 
-        <Button Grid.Row="6"
+        <Button Grid.Row="8"
                 Grid.Column="1"
                 Content="Go Back"
                 Command="{Binding returnCommand}"

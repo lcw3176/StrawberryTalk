@@ -4,16 +4,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace StrawberryServer.routes
 {
     class Index
     {
         private string userId { get; set; }
+        private string userNickname { get; set; }
         private Socket socket;
         private Auth auth;
         enum packetType { Text,Image};
@@ -28,16 +27,16 @@ namespace StrawberryServer.routes
             userId = param.Split(',')[0];
             string userPw = param.Split(',')[1];
 
-            bool isAuth = Query.GetInstance().GetUser(userId, userPw);
+            userNickname = Query.GetInstance().GetNickname(userId, userPw);
+            bool isAuth = Query.GetInstance().GetAuth(userId);
 
-            if (isAuth)
+            if (!string.IsNullOrEmpty(userNickname) && isAuth)
             {
                 if (RoomManager.GetInstance().CheckUser(userId))
                 {
-                    string userInfo = Query.GetInstance().GetUserInfo(userId);
+                    string userInfo = Query.GetInstance().GetUserInfo(userNickname);
                     RoomManager.GetInstance().AddUser(userId, socket);
 
-                    Console.WriteLine(userInfo);
                     return Process(userInfo);
                 }
             
@@ -48,19 +47,28 @@ namespace StrawberryServer.routes
             
             }
 
-            return Process("false");
+            else if(!string.IsNullOrEmpty(userNickname) && !isAuth)
+            {
+                return Process("auth");
+            }
+
+            else
+            {
+                return Process("false");
+            }
         }
 
         public byte[] Join(string param)
         {
             userId = param.Split(',')[0];
-            string userPw = param.Split(',')[1];
+            userNickname = param.Split(',')[1];
+            string userPw = param.Split(',')[2];
 
-            string isExist = Query.GetInstance().GetUser(userId);
+            string isExist = Query.GetInstance().GetNickname(userId);
 
             if(string.IsNullOrEmpty(isExist))
             {
-                Query.GetInstance().SetUser(userId, userPw);
+                Query.GetInstance().SetUser(userId, userNickname, userPw);
                 return Process("true");
             }
 
@@ -86,6 +94,7 @@ namespace StrawberryServer.routes
 
             if (auth.CompareAuthNumber(int.Parse(request)))
             {
+                Query.GetInstance().SetAuth(userId);
                 return Process("true");
             }
 
@@ -98,7 +107,7 @@ namespace StrawberryServer.routes
         public byte[] User(string param)
         {
             string findUser = param;
-            string result = Query.GetInstance().GetUser(findUser);
+            string result = Query.GetInstance().GetNickname(findUser);
 
             if (!string.IsNullOrEmpty(result))
             {

@@ -30,7 +30,7 @@ namespace StrawberryServer
             socket.Bind(new IPEndPoint(IPAddress.Any, 3000));
 
             Query.GetInstance().Open();
-            Query.GetInstance().initTable();
+            //Query.GetInstance().initTable();
 
             socket.Listen(10);
 

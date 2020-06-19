@@ -157,14 +157,14 @@ namespace StrawberryClient.Model
         private void Receive(string param)
         {
             // 유저 검색했을 때
-            if(param.Substring(0, 6) == "<FIND>")
+            if(param.Contains("<FIND>"))
             {
                 string name = param.Substring(6, param.Length - 6);
                 addFriend(name);
             }
 
             // 프로필 사진 교체 시
-            else if(param.Substring(0, 6) == "<RFRH>")
+            else if(param.Contains("<RFRH>"))
             {
                 Refresh();
             }
@@ -263,7 +263,7 @@ namespace StrawberryClient.Model
             if(isExist != null) { return; }
 
             // [0] 이름, [1] 메세지
-            if (recvData[0] != UserId && recvData.Length <= 2 && data.Substring(data.Length - 6, 6) != "<MADE>")
+            if (recvData[0] != UserId && recvData.Length <= 2 && !data.Contains("<MADE>"))
             {
                 result = data.Replace("<CHAT>", string.Empty).Split('&');
 

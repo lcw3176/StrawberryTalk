@@ -6,7 +6,15 @@ namespace StrawberryClient.Model
     {
         private string userId;
         private string userPw = string.Empty;
+        private string userNickname;
+
         private StringBuilder serverPw = new StringBuilder();
+
+        public string UserNickname
+        {
+            get { return userNickname; }
+            set { userNickname = value; }
+        }
 
         public string UserId
         {
@@ -55,7 +63,7 @@ namespace StrawberryClient.Model
 
         public string TryJoin()
         {
-            SocketConnection.GetInstance().Send("Join", userId, serverPw.ToString());
+            SocketConnection.GetInstance().Send("Join", userId, userNickname, serverPw.ToString());
 
             return SocketConnection.GetInstance().LoginRecv();
 
