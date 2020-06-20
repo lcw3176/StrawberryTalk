@@ -102,7 +102,7 @@ namespace StrawberryClient.ViewModel
         public HomeViewModel()
         {
             homeModel = new HomeModel();
-            homeModel.changed += new HomeModel.Changed(OnPropertyUpdate);
+            homeModel.changed += OnPropertyUpdate;
             chatCommand = new RelayCommand(chatExecuteMethod);
             findUserCommand = new RelayCommand(findUserExecuteMethod);
             setProfileCommand = new RelayCommand(setProfileExecuteMethod);
@@ -110,6 +110,7 @@ namespace StrawberryClient.ViewModel
             addChatCommand = new RelayCommand(addChatExecuteMethod);
             refreshCommand = new RelayCommand(refreshExecuteMethod);
 
+            SocketConnection.GetInstance().Send("Success", "null");
         }
 
         // 새로고침 버튼
@@ -176,10 +177,8 @@ namespace StrawberryClient.ViewModel
                         == MessageBoxResult.Yes)
                     {
                         homeModel.GetUser(i);
-
-                        return;
                     }
-                    
+
                 }
             }
 
@@ -207,15 +206,6 @@ namespace StrawberryClient.ViewModel
             }
             
             roomViewModel.Init(roomName, userId, showedRoomName, thumbnail, friendsImage);                          
-        }
-
-
-
-        // 초기화
-        public void Init(string userId, string data)
-        {
-            this.userId = userId;
-            homeModel.Init(data);
         }
     }
 }

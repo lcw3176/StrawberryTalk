@@ -12,6 +12,7 @@ namespace StrawberryServer
         private Socket socket;
         Index index;
         enum PacketType { Text, Image };
+        enum destination { Login, Join, Auth, Home, ChatRoom, Both };
 
         public ClientThread()
         {
@@ -21,29 +22,31 @@ namespace StrawberryServer
         public void SetInfo(Socket socket)
         {
             this.socket = socket;
-            index = new Index(this.socket);
+            socket.SendBufferSize = 0;
+            index = new Index(socket);
+
+            // https://support.microsoft.com/eu-es/help/214397/design-issues-sending-small-data-segments-over-tcp-with-winsock
+
         }
-       
+
         //Receive 계속 받기
         public void Start()
         {
-            byte[] recv;
             string router;
             string param;
             int dataType;
-            byte[] byteData;
-            // https://support.microsoft.com/eu-es/help/214397/design-issues-sending-small-data-segments-over-tcp-with-winsock
-            socket.SendBufferSize = 0;
 
             while (true)
             {
                 try
                 {
+                    byte[] byteData; 
+
                     byte[] recvSize = new byte[4];
                     socket.Receive(recvSize, 0, 4, SocketFlags.None);
 
                     int dataSize = BitConverter.ToInt32(recvSize, 0);
-                    recv = new byte[dataSize];
+                    byte[] recv = new byte[dataSize];
 
                     int recvLen = socket.Receive(recv, 0, dataSize, SocketFlags.None);
                     dataType = BitConverter.ToInt32(recv, 0);
@@ -52,6 +55,8 @@ namespace StrawberryServer
                     if (dataType == (int)PacketType.Text)
                     {
                         string data = Encoding.UTF8.GetString(recv, 4, recvLen - 4);
+                        Console.WriteLine(data);
+
                         router = data.Split('/')[0];
                         param = data.Replace(router + "/", string.Empty);
 

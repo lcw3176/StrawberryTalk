@@ -30,4 +30,3 @@ D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csproj.
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csproj.CoreCompileInputs.cache
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.exe
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.pdb
-D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Debug\StrawberryClient.csprojAssemblyReference.cache

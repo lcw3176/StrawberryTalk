@@ -1,8 +1,11 @@
-﻿using System;
+﻿using StrawberryClient.Command;
+using StrawberryClient.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StrawberryClient.Model
 {
@@ -16,38 +19,43 @@ namespace StrawberryClient.Model
             set { authNumber = value; }
         }
 
-        public bool SetAuth()
+        public AuthModel()
         {
-            SocketConnection.GetInstance().Send("Auth", "set");
+            SocketConnection.GetInstance().AuthRecv += AuthRecv;
+        }
 
-            string result = SocketConnection.GetInstance().LoginRecv();
-
-            if(result == "true")
+        private void AuthRecv(string param)
+        {
+            if(param == "true")
             {
-                return true;
+                MessageBox.Show("인증이 완료되었습니다. 정상적인 이용이 가능합니다.");
+                UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
+                SocketConnection.GetInstance().AuthRecv -= AuthRecv;
+                update.Execute("Login");
+            }
+
+            else if(param == "set")
+            {
+                MessageBox.Show("인증번호가 전송되었습니다. 인증을 진행해 주세요.");
             }
 
             else
             {
-                return false;
+                MessageBox.Show("잘못된 번호입니다. 다시 한번 확인해 주세요.");
             }
+
+        }
+
+        public bool SetAuth()
+        {
+            SocketConnection.GetInstance().Send("Auth", "set");
+            return true;
         }
 
         public bool GetAuth()
         {
             SocketConnection.GetInstance().Send("Auth", authNumber.ToString());
-
-            string result = SocketConnection.GetInstance().LoginRecv();
-
-            if(result == "true")
-            {
-                return true;
-            }
-
-            else
-            {
-                return false;   
-            }
+            return true;
         }
     }
 }

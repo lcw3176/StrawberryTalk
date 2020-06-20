@@ -93,7 +93,7 @@ CREATE TABLE user(
 |채팅방 메세지 추가 로드|Message/{roomName, pagination}|
 |프로필 사진 불러오기|Image/{id}|
 |내 프로필 사진 설정|MyImage/{ImageByteLength}|
-|프로필 사진 기본으로 변경|DefaultImage/"null"}|
+|프로필 사진 기본으로 변경|DefaultImage/"null"|
 
 ## 작동 방식 및 구현 기능
 ### 클라이언트 
@@ -122,6 +122,7 @@ CREATE TABLE user(
 
 #### Auth.cs
 * 회원가입시 유저 이메일 인증 클래스
+* 네이버 smtp 사용
 * 랜덤으로 6자리 정수 생성, 해당 유저 이메일로 전송
 * 서버id와 pw는 서버 컴퓨터 환경변수에 저장, 필요시 읽어옴
 

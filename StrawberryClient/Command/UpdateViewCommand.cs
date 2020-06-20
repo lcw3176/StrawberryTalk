@@ -24,6 +24,12 @@ namespace StrawberryClient.Command
 
         public void Execute(object parameter)
         {
+            if(parameter.ToString() == "Home")
+            {
+                HomeViewModel home = new HomeViewModel();
+                viewModel.SelectedViewModel = home;
+            }
+
             if(parameter.ToString() == "Join")
             {
                 JoinViewModel join = new JoinViewModel();
@@ -43,16 +49,16 @@ namespace StrawberryClient.Command
             }
         }
 
-        public void Execute(object parameter, string userId, string data)
-        {
+        //public void Execute(object parameter, string userId, string data)
+        //{
             
-            if (parameter.ToString() == "Home")
-            {
-                HomeViewModel home = new HomeViewModel();
-                home.Init(userId, data);
-                viewModel.SelectedViewModel = home;
-            }
-        }
+        //    if (parameter.ToString() == "Home")
+        //    {
+        //        HomeViewModel home = new HomeViewModel();
+        //        home.Init(userId, data);
+        //        viewModel.SelectedViewModel = home;
+        //    }
+        //}
 
 
     }

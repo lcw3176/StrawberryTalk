@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using StrawberryClient.Command;
+using StrawberryClient.ViewModel;
+using System.Text;
+using System.Windows;
 
 namespace StrawberryClient.Model
 {
@@ -58,15 +61,36 @@ namespace StrawberryClient.Model
 
         public JoinModel()
         {
+            SocketConnection.GetInstance().JoinRecv += JoinRecv;
+        }
+
+        private void JoinRecv(string param)
+        {
+            if (param == "false")
+            {
+                MessageBox.Show("이미 존재하는 계정입니다.");
+            }
+
+            else
+            {
+                MessageBox.Show("가입 완료! 인증을 완료하셔야 이용 가능합니다.");
+                UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
+                SocketConnection.GetInstance().JoinRecv -= JoinRecv;
+                update.Execute("Auth");
+            }
 
         }
 
-        public string TryJoin()
+        public void TryJoin()
         {
             SocketConnection.GetInstance().Send("Join", userId, userNickname, serverPw.ToString());
+        }
 
-            return SocketConnection.GetInstance().LoginRecv();
-
+        public void GoBack()
+        {
+            UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
+            SocketConnection.GetInstance().JoinRecv -= JoinRecv;
+            update.Execute("Login");
         }
 
 

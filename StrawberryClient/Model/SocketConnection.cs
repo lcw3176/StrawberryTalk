@@ -11,14 +11,20 @@ namespace StrawberryClient.Model
     class SocketConnection
     {
         public delegate void Receive(string param);
+        public event Receive ChatRecv;
+        public event Receive HomeRecv;
+        public event Receive LoginRecv;
+        public event Receive JoinRecv;
+        public event Receive AuthRecv;
+
         public delegate void ImageReceive(string id, byte[] image);
-        public event Receive Recv;
         public event ImageReceive imageRecv;
 
         enum PacketType { Text, Image };
+        enum destination { Login, Join, Auth, Home, ChatRoom, Both };
         public static SocketConnection Instance;
         private Socket socket;
-        public string data;
+        private bool isRun = false;
 
         public SocketConnection()
         {
@@ -51,7 +57,7 @@ namespace StrawberryClient.Model
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000));
+                GetSocket().Connect(new IPEndPoint(IPAddress.Parse("119.192.119.37"), 2580));
             }            
         }
 
@@ -63,8 +69,15 @@ namespace StrawberryClient.Model
 
         public void StartRecv()
         {
-            Thread thread = new Thread(Run);
-            thread.Start();
+            if(!isRun)
+            {
+                Console.WriteLine("threa");
+                Thread thread = new Thread(Run);
+                thread.Start();
+
+                isRun = true;
+            }
+
         }
 
 
@@ -88,17 +101,44 @@ namespace StrawberryClient.Model
                     GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
                     
                     int dataType = BitConverter.ToInt32(recv, 0);
-                    
+                    int viewModel = BitConverter.ToInt32(recv, 4);
+
+
                     if(dataType == (int)PacketType.Text)
                     {
-                        data = Encoding.UTF8.GetString(recv, 4, recv.Length - 4);
-                        Recv(data);                    
+                        string data = Encoding.UTF8.GetString(recv, 8, recv.Length - 8);
+
+                        switch (viewModel)
+                        {
+                            case (int)destination.Login:
+                                LoginRecv(data);
+                                break;
+                            case (int)destination.Join:
+                                JoinRecv(data);
+                                break;
+                            case (int)destination.Auth:
+                                AuthRecv(data);
+                                break;
+                            case (int)destination.Home:
+                                HomeRecv(data);
+                                break;
+                            case (int)destination.ChatRoom:
+                                ChatRecv(data);
+                                break;
+                            case (int)destination.Both:
+                                HomeRecv(data);
+                                ChatRecv?.Invoke(data);
+                                break;
+                            default:
+                                break;
+                        }
+                       
                     }
                     
                     else
                     {
-                        data = Encoding.UTF8.GetString(recv, 4, 10);
-                        imageRecv(data, recv);
+                        string userName = Encoding.UTF8.GetString(recv, 4, 10);
+                        imageRecv(userName, recv);
                     }
                     
                 }
@@ -114,36 +154,36 @@ namespace StrawberryClient.Model
         }
 
         // 로그인 완료 전에 씀
-        public string LoginRecv()
-        {
+        //public string LoginRecv()
+        //{
 
-            byte[] recv;
-            string data;
+        //    byte[] recv;
+        //    string data;
 
-            try
-            {
-                byte[] recvSize = new byte[4];
-                socket.Receive(recvSize, 0, 4, SocketFlags.None);
+        //    try
+        //    {
+        //        byte[] recvSize = new byte[4];
+        //        socket.Receive(recvSize, 0, 4, SocketFlags.None);
 
-                int dataSize = BitConverter.ToInt32(recvSize, 0);
-                recv = new byte[dataSize];
+        //        int dataSize = BitConverter.ToInt32(recvSize, 0);
+        //        recv = new byte[dataSize];
 
-                GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
-                data = Encoding.UTF8.GetString(recv, 4, recv.Length - 4);
+        //        GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
+        //        data = Encoding.UTF8.GetString(recv, 4, recv.Length - 4);
                 
                 
-                return data;
+        //        return data;
           
-            }
+        //    }
             
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                GetSocket().Close();
-                return "false";
-            }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //        GetSocket().Close();
+        //        return "false";
+        //    }
                 
-        }
+        //}
 
         public void ImageSend(byte[] image)
         {

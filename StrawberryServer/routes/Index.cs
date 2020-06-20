@@ -15,7 +15,8 @@ namespace StrawberryServer.routes
         private string userNickname { get; set; }
         private Socket socket;
         private Auth auth;
-        enum packetType { Text,Image};
+        enum packetType { Text,Image };
+        enum destination { Login, Join, Auth, Home, ChatRoom };
         
         public Index(Socket socket)
         {
@@ -34,27 +35,26 @@ namespace StrawberryServer.routes
             {
                 if (RoomManager.GetInstance().CheckUser(userId))
                 {
-                    string userInfo = Query.GetInstance().GetUserInfo(userNickname);
                     RoomManager.GetInstance().AddUser(userNickname, socket);
 
-                    return Process(userInfo);
+                    return Process(destination.Login, "true");
                 }
             
                 else
                 {
-                    return Process("already");
+                    return Process(destination.Login, "already");
                 }
             
             }
 
             else if(!string.IsNullOrEmpty(userNickname) && !isAuth)
             {
-                return Process("auth");
+                return Process(destination.Login, "auth");
             }
 
             else
             {
-                return Process("false");
+                return Process(destination.Login, "false");
             }
         }
 
@@ -66,15 +66,16 @@ namespace StrawberryServer.routes
 
             string isExist = Query.GetInstance().GetNickname(userId);
 
+
             if(string.IsNullOrEmpty(isExist))
             {
                 Query.GetInstance().SetUser(userId, userNickname, userPw);
-                return Process("true");
+                return Process(destination.Join, "true");
             }
 
             else
             {
-                return Process("false");
+                return Process(destination.Join, "false");
             }
         }
 
@@ -88,20 +89,27 @@ namespace StrawberryServer.routes
                 auth.SetAuthNumber();
                 auth.SendMail(userId);
 
-                return Process("true");
+                return Process(destination.Auth, "set");
             }
 
 
             if (auth.CompareAuthNumber(int.Parse(request)))
             {
                 Query.GetInstance().SetAuth(userId);
-                return Process("true");
+                return Process(destination.Auth, "true");
             }
 
             else
             {
-                return Process("false");
+                return Process(destination.Auth, "false");
             }
+        }
+
+        public byte[] Success(string param)
+        {
+            string data = Query.GetInstance().GetUserInfo(userNickname);
+
+            return Process(destination.Home, data + "<INIT>");
         }
 
         public byte[] User(string param)
@@ -119,7 +127,7 @@ namespace StrawberryServer.routes
                 result = "None";
             }
 
-            return Process("<FIND>" + result);
+            return Process(destination.Home, "<FIND>" + result + "<FIND>");
         }
 
         public byte[] Room(string param)
@@ -131,16 +139,16 @@ namespace StrawberryServer.routes
             {
                 Query.GetInstance().SetRoom(roomName);
 
-                return Process("<FIRST>");
+                return Process(destination.ChatRoom, "<FIRST>");
             }
 
             // 존재하는 채팅방 메세지 불러오기
             else
             {
                 List<string> data = Query.GetInstance().GetMessage(roomName);
-                string sendData = string.Join("&", data);
-                // 방 이름을 앞에 달아서 보내주기
-                return Process(roomName + "<AND>" + sendData);
+                string message = string.Join("&", data);
+
+                return Process(destination.ChatRoom, "<INIT>" + roomName + "<AND>" + message);
             }
         }
 
@@ -156,7 +164,7 @@ namespace StrawberryServer.routes
 
             RoomManager.GetInstance().EchoRoomUsers(roomName, fromUserName, sendData);
 
-            return Process(roomName + "<AND>" + sendData);
+            return Process(destination.ChatRoom, roomName + "<AND>" + sendData);
         }
 
         public byte[] Message(string param)
@@ -167,7 +175,7 @@ namespace StrawberryServer.routes
             List<string> data = Query.GetInstance().GetMessage(roomName, pageNation);
             string sendData = string.Join("&", data) + "<PLUS>";
 
-            return Process(roomName + "<AND>" + sendData);
+            return Process(destination.ChatRoom, roomName + "<AND>" + sendData);
         }
 
 
@@ -201,25 +209,27 @@ namespace StrawberryServer.routes
 
             Query.GetInstance().SetImage(userId, path);
 
-            return Process("<RFRH>");
+            return Process(destination.Home, "<REFRESH>");
         }
 
         public byte[] DefaultImage(string param)
         {
             Query.GetInstance().SetImage(userId, null);
 
-            return Process("<RFRH>");
+            return Process(destination.Home, "<REFRESH>");
         }
 
-        private byte[] Process(string data)
+        private byte[] Process(destination viewModel, string data)
         {
             byte[] type = BitConverter.GetBytes((int)packetType.Text);
+            byte[] togo = BitConverter.GetBytes((int)viewModel);
             byte[] text = Encoding.UTF8.GetBytes(data);
 
-            byte[] send = new byte[type.Length + text.Length];
+            byte[] send = new byte[type.Length + togo.Length + text.Length];
 
             type.CopyTo(send, 0);
-            text.CopyTo(send, 4);
+            togo.CopyTo(send, 4);
+            text.CopyTo(send, 8);
 
             return send;
         }

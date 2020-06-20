@@ -74,12 +74,168 @@ namespace StrawberryClient.Model
 
         public void AttachAlarm()
         {
-            SocketConnection.GetInstance().Recv += new SocketConnection.Receive(Receive);
+            SocketConnection.GetInstance().ChatRecv += ChatRecv;
+        }
+
+        string isSame = string.Empty;
+
+        private void ChatRecv(string param)
+        {
+            Console.WriteLine(param);
+
+            if(param.Contains("<FIRST>"))
+            {
+                return;
+            }
+
+            if (param.Contains("<CHAT>"))
+            {
+                string[] data = param.Replace("<CHAT>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
+                string room = data[0];
+
+                if(room == this.roomName)
+                {
+                    string userName = data[1].Split('&')[0];
+                    string message = data[1].Split('&')[1];
+
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        // is Me
+                        if (userId == userName)
+                        {
+                            MessageList.Add(new MessageList()
+                            {
+                                userName = userName,
+                                message = message,
+                                isMe = true,
+                                sameBefore = (isSame == userName),
+                            });
+                        }
+
+                        else
+                        {
+                            MessageList.Add(new MessageList()
+                            {
+                                userName = userName,
+                                message = message,
+                                isMe = false,
+                                sameBefore = (isSame == userName),
+                                profileImage = friendsImage[userName],
+                            });
+                        }
+                    });
+
+                    isSame = userName;
+                }
+
+            }
+
+            // 채팅방 초기화, 첫 메세지 세팅
+            if (param.Contains("<INIT>"))
+            {
+                string[] data = param.Replace("<INIT>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
+                string room = data[0];
+
+                if(room == this.RoomName)
+                {
+                    string[] msg = data[1].Split('&');
+                    string[] temp;
+
+                    // [0] 이름, [1] 메세지
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        for (int i = 0; i < msg.Length; i++)
+                        {
+                            temp = msg[i].Split(',');
+
+                            // is Me
+                            if (userId == temp[0])
+                            {
+                                MessageList.Add(new MessageList()
+                                {
+                                    userName = temp[0],
+                                    message = temp[1],
+                                    isMe = true,
+                                    sameBefore = (isSame == temp[0]),
+                                });
+                            }
+
+                            else
+                            {
+                                MessageList.Add(new MessageList()
+                                {
+                                    userName = temp[0],
+                                    message = temp[1],
+                                    isMe = false,
+                                    sameBefore = (isSame == temp[0]),
+                                    profileImage = friendsImage[temp[0]],
+                                });
+                            }
+
+                            isSame = temp[0];
+                        }
+                    });
+                }
+            }
+
+            // 메세지 추가 로딩
+            if (param.Contains("<PLUS>"))
+            {
+                string[] data = param.Replace("<PLUS>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
+                string[] temp;
+
+                if (data.Length > 1)
+                {
+                    // [0] 이름, [1] 메세지
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        for (int i = 0; i < data.Length; i++)
+                        {
+                            temp = data[i].Split(',');
+
+                            // is Me
+                            if (userId == temp[0])
+                            {
+                                MessageList.Add(new MessageList()
+                                {
+                                    userName = temp[0],
+                                    message = temp[1],
+                                    isMe = true,
+                                    sameBefore = (isSame == temp[0]),
+                                });
+
+                            }
+
+                            else
+                            {
+                                MessageList.Add(new MessageList()
+                                {
+                                    userName = temp[0],
+                                    message = temp[1],
+                                    isMe = false,
+                                    sameBefore = (isSame == temp[0]),
+                                    profileImage = friendsImage[temp[0]],
+                                });
+
+                            }
+                            isSame = temp[0];
+
+
+                            MessageList.Move(messageList.Count - 1, i);
+                        }
+                    });
+
+                    pageNation++;
+                    move();
+                }                
+            }
+
+            update("messageList");
         }
 
         public void DetachAlarm()
         {
-            SocketConnection.GetInstance().Recv -= new SocketConnection.Receive(Receive);
+            SocketConnection.GetInstance().ChatRecv -= ChatRecv;
             MessageList = null;
             FriendsImage = null;
         }
@@ -94,161 +250,6 @@ namespace StrawberryClient.Model
         public void MoreMessage()
         {
             SocketConnection.GetInstance().Send("Message", roomName, pageNation.ToString());
-        }
-
-        string isSame = string.Empty;
-
-        // [0] fromUserName [1] msg
-        private void Receive(string param)
-        {
-            string[] recvData = param.Split(new string[] { "<AND>" }, StringSplitOptions.None);
-            string recvRoomName = recvData[0];
-
-            if (recvRoomName != roomName) { return; }
-
-            string messageChunk = recvData[1];
-
-
-            // 메세지 지속적 주고 받는 상황 data.Split('&').Length <= 2 && 
-            if (messageChunk.Contains("<CHAT>"))
-            {
-                string[] data = messageChunk.Replace("<CHAT>", string.Empty).Split('&');
-                string name = data[0];
-                string message = data[1];
-
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    // is Me
-                    if (userId == name)
-                    {
-                        MessageList.Add(new MessageList()
-                        {
-                            userName = name,
-                            message = message,
-                            isMe = true,
-                            sameBefore = (isSame == name),
-                        });
-                    }
-
-                    else
-                    {
-                        MessageList.Add(new MessageList()
-                        {
-                            userName = name,
-                            message = message,
-                            isMe = false,
-                            sameBefore = (isSame == name),
-                            profileImage = friendsImage[name],
-                        });
-                    }
-                });
-
-
-                isSame = name;
-
-
-            }
-
-            // 메세지 추가 로딩
-            else if(messageChunk.Contains("<PLUS>"))
-            {
-                string[] data = messageChunk.Replace("<PLUS>", string.Empty).Split('&');
-                string[] temp;
-
-                if (data.Length <= 1)
-                {
-                    return;
-                }
-
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        temp = data[i].Split(',');
-
-                        // is Me
-                        if (userId == temp[0])
-                        {
-                            MessageList.Add(new MessageList()
-                            {
-                                userName = temp[0],
-                                message = temp[1],
-                                isMe = true,
-                                sameBefore = (isSame == temp[0]),
-                            });
-
-                        }
-
-                        else
-                        {
-                            MessageList.Add(new MessageList()
-                            {
-                                userName = temp[0],
-                                message = temp[1],
-                                isMe = false,
-                                sameBefore = (isSame == temp[0]),
-                                profileImage = friendsImage[temp[0]],
-                            });
-
-                        }
-                        isSame = temp[0];
-
-
-                        MessageList.Move(messageList.Count - 1, i);
-                    }
-                });
-
-                pageNation++;
-                move();
-
-            }
-
-            // 메세지 초기 세팅
-            else
-            {
-                string[] msg = messageChunk.Split('&');
-
-                if (string.IsNullOrEmpty(msg[0])) { return; }
-
-                string[] temp;
-
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    for (int i = 0; i < msg.Length; i++)
-                    {
-                        temp = msg[i].Split(',');
-
-                        // is Me
-                        if (userId == temp[0])
-                        {
-                            MessageList.Add(new MessageList()
-                            {
-                                userName = temp[0],
-                                message = temp[1],
-                                isMe = true,
-                                sameBefore = (isSame == temp[0]),
-                            });
-                        }
-
-                        else
-                        {
-                            MessageList.Add(new MessageList()
-                            {
-                                userName = temp[0],
-                                message = temp[1],
-                                isMe = false,
-                                sameBefore = (isSame == temp[0]),
-                                profileImage = friendsImage[temp[0]],
-                            });
-                        }
-
-                        isSame = temp[0];
-                    }
-                });
-            
-            }
-
-            update("messageList");
         }
 
     }

@@ -38,31 +38,13 @@ namespace StrawberryClient.ViewModel
         // 인증 재요청
         private void reAuthExecuteMethod(object obj)
         {
-            if(model.SetAuth())
-            {
-                MessageBox.Show("재전송 되었습니다. 메일을 확인해 주세요");
-            }
-
-            else
-            {
-                MessageBox.Show("요청이 거부되었습니다. 잠시 후에 다시 시도해 주세요.");
-            }
+            model.SetAuth();
         }
 
         // 인증 확인 요청
         private void confirmExecuteMethod(object obj)
         {
-            if(model.GetAuth())
-            {
-                MessageBox.Show("인증이 완료되었습니다. 정상적인 이용이 가능합니다.");
-                UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-                update.Execute(obj);
-            }
-
-            else
-            {
-                MessageBox.Show("잘못된 번호입니다. 다시 한번 확인해 주세요.");
-            }
+            model.GetAuth();
         }
     }
 }

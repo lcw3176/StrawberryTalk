@@ -72,25 +72,12 @@ namespace StrawberryClient.ViewModel
                 return;
             }
 
-            string result = model.TryJoin();
-
-            if(result == "false")
-            {
-                MessageBox.Show("이미 존재하는 아이디 입니다.");
-            }
-
-            else
-            {
-                MessageBox.Show("가입 완료! 인증을 완료하셔야 이용 가능합니다.");
-                UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-                update.Execute(obj);
-            }
+            model.TryJoin();          
         }
 
         private void returnExecuteMethod(object obj)
         {
-            UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-            update.Execute(obj);
+            model.GoBack();
         }
     }
 }

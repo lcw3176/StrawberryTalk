@@ -36,13 +36,13 @@ namespace StrawberryServer.DataBase
 
         public void initTable()
         {
-            string s1 = "CREATE table user(" +
-                "sid integer PRIMARY KEY AUTOINCREMENT, " +
-                "name varchar(30) not null, " +
-                "nickname varchar(20) not null, " +
-                "password varchar(20) not null, " +
-                "auth varchar(5) not null, " +
-                "image varchar(40))";
+            //string s1 = "CREATE table user(" +
+            //    "sid integer PRIMARY KEY AUTOINCREMENT, " +
+            //    "name varchar(30) not null, " +
+            //    "nickname varchar(20) not null, " +
+            //    "password varchar(20) not null, " +
+            //    "auth varchar(5) not null, " +
+            //    "image varchar(40))";
 
             string s2 = "CREATE table room(" +
                 "sid integer PRIMARY KEY AUTOINCREMENT, " +
@@ -69,9 +69,9 @@ namespace StrawberryServer.DataBase
 
             SQLiteCommand cmd;
             string sql;
-            sql = "drop table user";
-            cmd = new SQLiteCommand(sql, conn);
-            cmd.ExecuteNonQuery();
+            //sql = "drop table user";
+            //cmd = new SQLiteCommand(sql, conn);
+            //cmd.ExecuteNonQuery();
 
             sql = "drop table message";
             cmd = new SQLiteCommand(sql, conn);
@@ -85,8 +85,8 @@ namespace StrawberryServer.DataBase
             cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
 
-            cmd = new SQLiteCommand(s1, conn);
-            cmd.ExecuteNonQuery();
+            //cmd = new SQLiteCommand(s1, conn);
+            //cmd.ExecuteNonQuery();
 
             cmd = new SQLiteCommand(s2, conn);
             cmd.ExecuteNonQuery();
@@ -103,7 +103,7 @@ namespace StrawberryServer.DataBase
 
         }
 
-        // 유저 로그인
+
         public string GetNickname(string userId, string userPw)
         {
             string sql = string.Format("SELECT nickname FROM user WHERE name = '{0}' AND password = '{1}'", userId, userPw);
@@ -123,7 +123,7 @@ namespace StrawberryServer.DataBase
             return nickname;
         }
 
-        // 특정 유저 닉네임 가져오기, 유저 검색 기능에 사용
+        // 유저 로그인, 특정 유저 닉네임 가져오기, 유저 검색 기능에 사용
         public string GetNickname(string id)
         {
             string sql = string.Format("SELECT nickname FROM user WHERE nickname = '{0}'", id);
@@ -310,13 +310,17 @@ namespace StrawberryServer.DataBase
 
 
             StringBuilder data = new StringBuilder();
+
             data.Append(userNickname);
             data.Append("<NICK>");
 
+            data.Append("<FRIEND>");
             data.Append(string.Join(",", friends));
+            data.Append("<FRIEND>");
 
-            data.Append("<NEXT>");
+            data.Append("<ROOM>");
             data.Append(string.Join(",", room));
+            data.Append("<ROOM>");
 
             reader.Close();
             cmd.Dispose();
