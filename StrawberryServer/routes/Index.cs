@@ -35,7 +35,7 @@ namespace StrawberryServer.routes
                 if (RoomManager.GetInstance().CheckUser(userId))
                 {
                     string userInfo = Query.GetInstance().GetUserInfo(userNickname);
-                    RoomManager.GetInstance().AddUser(userId, socket);
+                    RoomManager.GetInstance().AddUser(userNickname, socket);
 
                     return Process(userInfo);
                 }
@@ -111,7 +111,7 @@ namespace StrawberryServer.routes
 
             if (!string.IsNullOrEmpty(result))
             {
-                Query.GetInstance().SetFriend(userId, findUser);
+                Query.GetInstance().SetFriend(userNickname, findUser);
             }
 
             else
@@ -153,7 +153,7 @@ namespace StrawberryServer.routes
             
             Query.GetInstance().SetMessage(roomName, fromUserName, msg);
             string sendData = string.Join("&", fromUserName, msg) + "<CHAT>";
-            
+
             RoomManager.GetInstance().EchoRoomUsers(roomName, fromUserName, sendData);
 
             return Process(roomName + "<AND>" + sendData);
@@ -183,7 +183,7 @@ namespace StrawberryServer.routes
                 image.Save(ms, ImageFormat.Jpeg);
                 image.Dispose();
 
-                return Process(ms.ToArray());
+                return Process(userId, ms.ToArray());
             }
         }
      
@@ -224,14 +224,24 @@ namespace StrawberryServer.routes
             return send;
         }
 
-        private byte[] Process(byte[] Image)
+        private byte[] Process(string userId, byte[] Image)
         {
-            byte[] type = BitConverter.GetBytes((int)packetType.Image);
+            if(userId.Length < 10)
+            {
+                for(int i = userId.Length; i < 10; i++)
+                {
+                    userId += "&";
+                }                
+            }
 
-            byte[] send = new byte[type.Length + Image.Length];
+
+            byte[] type = BitConverter.GetBytes((int)packetType.Image);
+            byte[] id = Encoding.UTF8.GetBytes(userId);
+            byte[] send = new byte[type.Length + id.Length + Image.Length];
 
             type.CopyTo(send, 0);
-            Image.CopyTo(send, 4);
+            id.CopyTo(send, 4);
+            Image.CopyTo(send, 14);
 
             return send;
         }

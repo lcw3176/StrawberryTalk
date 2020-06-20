@@ -11,7 +11,7 @@ namespace StrawberryClient.Model
     class SocketConnection
     {
         public delegate void Receive(string param);
-        public delegate void ImageReceive(byte[] image);
+        public delegate void ImageReceive(string id, byte[] image);
         public event Receive Recv;
         public event ImageReceive imageRecv;
 
@@ -19,8 +19,6 @@ namespace StrawberryClient.Model
         public static SocketConnection Instance;
         private Socket socket;
         public string data;
-        byte[] recv = new byte[2048 * 100];
-        private object lockObject = new object();
 
         public SocketConnection()
         {
@@ -43,6 +41,7 @@ namespace StrawberryClient.Model
             if (socket == null)
             {
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.SendBufferSize = 0;
             }
 
             return socket;
@@ -52,7 +51,7 @@ namespace StrawberryClient.Model
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000)); 
+                GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000));
             }            
         }
 
@@ -72,21 +71,21 @@ namespace StrawberryClient.Model
         // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
+            byte[] recvSize;
+            byte[] recv;
 
             while (GetSocket().Connected)
             {
                 try
                 {
-
-                    byte[] recvSize = new byte[4];
+                    recvSize = new byte[4];
                     GetSocket().Receive(recvSize, 0, 4, SocketFlags.None);
 
                     int dataSize = BitConverter.ToInt32(recvSize, 0);
 
-                    byte[] recv = new byte[dataSize];
+                    recv = new byte[dataSize];
 
                     GetSocket().Receive(recv, 0, dataSize, SocketFlags.None);
-
                     
                     int dataType = BitConverter.ToInt32(recv, 0);
                     
@@ -98,7 +97,8 @@ namespace StrawberryClient.Model
                     
                     else
                     {
-                        imageRecv(recv);
+                        data = Encoding.UTF8.GetString(recv, 4, 10);
+                        imageRecv(data, recv);
                     }
                     
                 }
@@ -118,7 +118,7 @@ namespace StrawberryClient.Model
         {
 
             byte[] recv;
-            string data = string.Empty;
+            string data;
 
             try
             {
@@ -163,10 +163,7 @@ namespace StrawberryClient.Model
 
             GetSocket().Send(size, 0, 4, SocketFlags.None);
 
-            Thread.Sleep(10);
-
             GetSocket().Send(send, 0, send.Length, SocketFlags.None);
-
         }
 
         public void Send(string request, params string[] queryString)
@@ -194,6 +191,7 @@ namespace StrawberryClient.Model
 
             size = BitConverter.GetBytes(send.Length);
             GetSocket().Send(size, 0, 4, SocketFlags.None);
+
             GetSocket().Send(send, 0, send.Length, SocketFlags.None);
 
         }

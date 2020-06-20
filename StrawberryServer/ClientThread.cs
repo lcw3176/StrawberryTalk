@@ -32,7 +32,8 @@ namespace StrawberryServer
             string param;
             int dataType;
             byte[] byteData;
-
+            // https://support.microsoft.com/eu-es/help/214397/design-issues-sending-small-data-segments-over-tcp-with-winsock
+            socket.SendBufferSize = 0;
 
             while (true)
             {
@@ -50,12 +51,9 @@ namespace StrawberryServer
                     // 텍스트 전송
                     if (dataType == (int)PacketType.Text)
                     {
-                        Console.WriteLine("텍스트 전송 요청");
                         string data = Encoding.UTF8.GetString(recv, 4, recvLen - 4);
                         router = data.Split('/')[0];
                         param = data.Replace(router + "/", string.Empty);
-
-                        Console.WriteLine(data);
 
                         Type type = index.GetType();
                         MethodInfo routes = type.GetMethod(router, BindingFlags.Instance | BindingFlags.Public);
@@ -65,10 +63,8 @@ namespace StrawberryServer
                     // 이미지 전송
                     else
                     {
-                        Console.WriteLine("이미지 전송 요청");
                         router = Encoding.UTF8.GetString(recv, 4, 7);
 
-                        Console.WriteLine(router);
                         Type type = index.GetType();
                         MethodInfo routes = type.GetMethod(router, BindingFlags.Instance | BindingFlags.Public);
                         byteData = (byte[])routes.Invoke(index, new object[] { recv });
@@ -78,8 +74,6 @@ namespace StrawberryServer
 
                     sendSize = BitConverter.GetBytes(byteData.Length);
                     socket.Send(sendSize, 0, 4, SocketFlags.None);
-
-                    Thread.Sleep(10);
 
                     socket.Send(byteData, 0, byteData.Length, SocketFlags.None);
 

@@ -43,21 +43,21 @@ namespace StrawberryClient.Model
                     parameters.Param[0] = param;
 
                     Image image = Image.FromFile(path);
+                    image.Save(ms, jpgEncoder, parameters);
+                    //// 사진 크기가 크면 줄여줌
+                    //if(image.Height + image.Width >= 3000)
+                    //{
+                    //    Size size = new Size(1920, 1080);
+                    //    Image resizeImage = new Bitmap(image, size);
+                    //    resizeImage.Save(ms, jpgEncoder, parameters);
+                    //    resizeImage.Dispose();
+                    //}
 
-                    // 사진 크기가 크면 줄여줌
-                    if(image.Height + image.Width >= 3000)
-                    {
-                        Size size = new Size(1920, 1080);
-                        Image resizeImage = new Bitmap(image, size);
-                        resizeImage.Save(ms, jpgEncoder, parameters);
-                        resizeImage.Dispose();
-                    }
+                    //else
+                    //{
 
-                    else
-                    {
-                        image.Save(ms, jpgEncoder, parameters);
-                    }
-                    
+                    //}
+
                     SocketConnection.GetInstance().ImageSend(ms.ToArray());
 
                     image.Dispose();

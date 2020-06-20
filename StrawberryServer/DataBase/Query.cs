@@ -87,16 +87,16 @@ namespace StrawberryServer.DataBase
 
             cmd = new SQLiteCommand(s1, conn);
             cmd.ExecuteNonQuery();
-            
+
             cmd = new SQLiteCommand(s2, conn);
             cmd.ExecuteNonQuery();
             
             cmd = new SQLiteCommand(s3, conn);
             cmd.ExecuteNonQuery();
-            
+
             cmd = new SQLiteCommand(s5, conn);
             cmd.ExecuteNonQuery();
-            
+
             cmd.Dispose();
 
             Console.WriteLine("Init complete");

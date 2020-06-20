@@ -212,10 +212,10 @@ namespace StrawberryClient.ViewModel
 
 
         // 초기화
-        public void Init(string userId, string friendsId)
+        public void Init(string userId, string data)
         {
             this.userId = userId;
-            homeModel.Init(friendsId);
+            homeModel.Init(data);
         }
     }
 }

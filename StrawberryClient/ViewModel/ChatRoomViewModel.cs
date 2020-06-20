@@ -29,7 +29,7 @@ namespace StrawberryClient.ViewModel
 
         public ObservableCollection<MessageList> messageList
         {
-            get { return new ObservableCollection<MessageList>(chatRoomModel.MessageList.Reverse()); }
+            get { return chatRoomModel.MessageList; }
             set
             { 
                 chatRoomModel.MessageList = value;
@@ -121,11 +121,10 @@ namespace StrawberryClient.ViewModel
         // 메세지 추가 로딩 후 스크롤 위치 이동
         private void MoveScrollToMiddle()
         {
-
-            DispatcherService.Invoke((System.Action)(() =>
+            App.Current.Dispatcher.Invoke((Action)delegate
             {
                 scroll.ScrollToVerticalOffset(this.height);
-            }));
+            });
         }
 
         private void NotifyUpdate(string propertyName)

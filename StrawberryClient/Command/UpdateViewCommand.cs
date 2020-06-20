@@ -43,13 +43,13 @@ namespace StrawberryClient.Command
             }
         }
 
-        public void Execute(object parameter, string userId, string result)
+        public void Execute(object parameter, string userId, string data)
         {
             
             if (parameter.ToString() == "Home")
             {
                 HomeViewModel home = new HomeViewModel();
-                home.Init(userId, result);
+                home.Init(userId, data);
                 viewModel.SelectedViewModel = home;
             }
         }

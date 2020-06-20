@@ -22,7 +22,6 @@ namespace StrawberryServer
     /// </summary>
     class Program
     {
-
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += Exit;

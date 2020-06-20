@@ -25,6 +25,7 @@ namespace StrawberryServer
         public void AddUser(string userId, Socket socket)
         {
             userDic.Add(userId, socket);
+            Console.WriteLine(userId + " 접속함  " + socket.RemoteEndPoint.ToString());
         }
 
         public void RemoveUser(Socket socket)
@@ -33,6 +34,7 @@ namespace StrawberryServer
             {
                 string userId = userDic.FirstOrDefault(x => x.Value == socket).Key;
                 userDic.Remove(userId);
+                Console.WriteLine(userId + " 접속 종료");
             }
 
             catch

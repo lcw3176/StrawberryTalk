@@ -37,7 +37,7 @@
 
         <TextBlock Grid.Row="1"
                    Grid.Column="1"
-                   Text=" ID"
+                   Text=" Email"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Left"
                    FontSize="20"/>

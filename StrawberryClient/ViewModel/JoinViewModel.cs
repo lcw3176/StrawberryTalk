@@ -66,6 +66,12 @@ namespace StrawberryClient.ViewModel
                 return;
             }
 
+            if(userNickname.Trim().Length > 10 || Regex.IsMatch(userNickname.Trim(), @"[ㄱ-ㅎ가힣]"))
+            {
+                MessageBox.Show("닉네임은 10글자 이하 영어만 허용됩니다.");
+                return;
+            }
+
             string result = model.TryJoin();
 
             if(result == "false")

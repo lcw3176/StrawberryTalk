@@ -4,6 +4,7 @@ C:\Users\THE-LEE\Desktop\StrawberryClient.pdb
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\MainWindow.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AddChatView.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AlarmView.g.cs
+D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AuthView.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\ChatRoomView.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\HomeView.g.cs
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\JoinView.g.cs
@@ -17,6 +18,7 @@ D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\App.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\MainWindow.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AddChatView.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AlarmView.baml
+D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\AuthView.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\ChatRoomView.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\HomeView.baml
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\View\JoinView.baml
@@ -28,4 +30,3 @@ D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.cspro
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.csproj.CoreCompileInputs.cache
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.exe
 D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.pdb
-D:\project\Cs\StrawberryTalk\StrawberryClient\obj\Release\StrawberryClient.csprojAssemblyReference.cache

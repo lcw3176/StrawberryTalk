@@ -36,7 +36,7 @@
 
         <Label Grid.Row="2" 
                Grid.Column="1" 
-               Content="ID" 
+               Content="Email" 
                FontSize="18" 
                HorizontalAlignment="Left"
                VerticalAlignment="Center"/>

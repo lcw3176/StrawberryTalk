@@ -68,11 +68,12 @@ namespace StrawberryClient.ViewModel
                 path = open.FileName;
                 FileInfo info = new FileInfo(path);
 
-                if(info.Length > maxProfileSize)
+                if (info.Length > maxProfileSize)
                 {
                     MessageBox.Show("용랑이 큽니다. 줄여오세요.");
                     return;
                 }
+
                 ImageSourceConverter c = new ImageSourceConverter();
                 profileImage = (ImageSource)c.ConvertFromString(path);
             }

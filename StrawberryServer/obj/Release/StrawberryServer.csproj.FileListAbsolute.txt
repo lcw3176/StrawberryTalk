@@ -1,0 +1,7 @@
+C:\Users\THE-LEE\Desktop\StrawberryServer.exe.config
+C:\Users\THE-LEE\Desktop\StrawberryServer.exe
+C:\Users\THE-LEE\Desktop\StrawberryServer.pdb
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Release\StrawberryServer.csproj.CoreCompileInputs.cache
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Release\StrawberryServer.csproj.CopyComplete
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Release\StrawberryServer.exe
+D:\project\Cs\StrawberryTalk\StrawberryServer\obj\Release\StrawberryServer.pdb
