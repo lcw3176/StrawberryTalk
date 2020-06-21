@@ -32,7 +32,7 @@ CREATE TABLE message(
         sid integer PRIMARY KEY AUTOINCREMENT, 
         roomName varchar(30), 
         fromUserName varchar(20), 
-        message varchar(100), 
+        message varchar(200), 
         foreign key(roomName) 
         references room(name) 
         on update cascade 
@@ -70,8 +70,8 @@ CREATE TABLE room(
 CREATE TABLE user(
         sid integer PRIMARY KEY AUTOINCREMENT,
         name varchar(30) not null,
-        nickname varchar(20) not null,
-        password varchar(20) not null,
+        nickname varchar(10) not null,
+        password varchar(44) not null,
         auth varchar(5) not null,
         image varchar(40))
 
@@ -99,6 +99,7 @@ CREATE TABLE user(
 ### 클라이언트 
 * WPF 사용, MVVM 패턴
 * 소켓 통신(TCP), 소켓 객체는 Singleton
+* 유저 닉네임 검색으로 등록 후, 채팅 시작 가능
 * 프로필 사진 설정
 * 메세지 알람
 * 단체 채팅방
@@ -126,26 +127,30 @@ CREATE TABLE user(
 * 랜덤으로 6자리 정수 생성, 해당 유저 이메일로 전송
 * 서버id와 pw는 서버 컴퓨터 환경변수에 저장, 필요시 읽어옴
 
+#### Encryption.cs
+* 비밀번호 암호화 클래스
+* HMAC-SHA256 사용
+* 비밀키는 환경변수에 저장, 필요시 읽어옴
 
 
 ## 작동 모습
-### 로그인, 회원가입(로그인, 중복 로그인 방지, 회원가입)
+### 로그인, 회원가입(로그인, 회원가입, 인증)
 <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565365-8e7c3280-ada3-11ea-9c60-0cbe075c9c6c.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565364-8d4b0580-ada3-11ea-9830-ccfed2fbc936.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565366-8e7c3280-ada3-11ea-8f90-978e5ca6a779.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220636-36b77a00-b3e8-11ea-9d89-0481f0d66662.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220638-37e8a700-b3e8-11ea-8593-769e6f0eb37c.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220640-37e8a700-b3e8-11ea-9374-58894a0c6662.png">
  </div>
   
-### 메인 홈(메인 창, 내 프로필 사진 설정, 친구 프로필 사진 열람)
+### 메인 홈(메인 홈, 내 프로필 사진 설정, 사진 변경 후)
 <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565408-eb77e880-ada3-11ea-8e3e-867c0885a1db.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565407-eadf5200-ada3-11ea-8ad7-d223cad4ab3b.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565405-e9ae2500-ada3-11ea-9330-69360de62472.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220641-38813d80-b3e8-11ea-92e7-7348850bc6ca.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220642-38813d80-b3e8-11ea-9e97-85edfb67baf3.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220644-3919d400-b3e8-11ea-8975-bf6485c2c6b6.png">
  </div>
  
- ### 채팅 과정(단체 채팅방 생성, 채팅 알람, 채팅 상황)
+ ### 채팅 과정(단체 채팅방 생성, 채팅 진행)
  <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/84565432-1f530e00-ada4-11ea-9223-97c0f4ab23c2.png">
-  <img width="100" src="https://user-images.githubusercontent.com/59993347/84565433-20843b00-ada4-11ea-9dcb-40fbb0551b92.png">
-  <img width="500" src="https://user-images.githubusercontent.com/59993347/84565434-20843b00-ada4-11ea-9f40-8a8f5fb855b9.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220645-39b26a80-b3e8-11ea-882a-62f0b2fbc818.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220647-39b26a80-b3e8-11ea-9e05-4c323645d8b2.png">
+  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220648-3a4b0100-b3e8-11ea-8b61-7db7c8ad71a3.png">
  </div>

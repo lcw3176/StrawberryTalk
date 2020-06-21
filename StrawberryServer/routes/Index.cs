@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace StrawberryServer.routes
@@ -28,7 +29,12 @@ namespace StrawberryServer.routes
             userId = param.Split(',')[0];
             string userPw = param.Split(',')[1];
 
-            userNickname = Query.GetInstance().GetNickname(userId, userPw);
+            Encryption enc = new Encryption();
+            enc.SetValue(userPw);
+
+            string encPw = enc.GetValue();
+
+            userNickname = Query.GetInstance().GetNickname(userId, encPw);
             bool isAuth = Query.GetInstance().GetAuth(userId);
 
             if (!string.IsNullOrEmpty(userNickname) && isAuth)
@@ -64,13 +70,29 @@ namespace StrawberryServer.routes
             userNickname = param.Split(',')[1];
             string userPw = param.Split(',')[2];
 
-            string isExist = Query.GetInstance().GetNickname(userId);
+            Encryption enc = new Encryption();
+            enc.SetValue(userPw);
+
+            string encPw = enc.GetValue();
+
+            string emailExist = Query.GetInstance().GetEmail(userId);
+            string nicknameExist = Query.GetInstance().GetNickname(userNickname);
 
 
-            if(string.IsNullOrEmpty(isExist))
+            if(string.IsNullOrEmpty(nicknameExist) && string.IsNullOrEmpty(emailExist))
             {
-                Query.GetInstance().SetUser(userId, userNickname, userPw);
+                Query.GetInstance().SetUser(userId, userNickname, encPw);
                 return Process(destination.Join, "true");
+            }
+
+            else if(!string.IsNullOrEmpty(emailExist))
+            {
+                return Process(destination.Join, "email");
+            }
+
+            else if(!string.IsNullOrEmpty(nicknameExist))
+            {
+                return Process(destination.Join, "nickname");
             }
 
             else

@@ -77,11 +77,17 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().ChatRecv += ChatRecv;
         }
 
+        public void DetachAlarm()
+        {
+            SocketConnection.GetInstance().ChatRecv -= ChatRecv;
+            MessageList = null;
+            FriendsImage = null;
+        }
+
         string isSame = string.Empty;
 
         private void ChatRecv(string param)
         {
-            Console.WriteLine(param);
 
             if(param.Contains("<FIRST>"))
             {
@@ -184,7 +190,7 @@ namespace StrawberryClient.Model
                 string[] data = param.Replace("<PLUS>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
                 string[] temp;
 
-                if (data.Length > 1)
+                if (data.Length > 2)
                 {
                     // [0] 이름, [1] 메세지
                     App.Current.Dispatcher.Invoke((Action)delegate
@@ -231,13 +237,6 @@ namespace StrawberryClient.Model
             }
 
             update("messageList");
-        }
-
-        public void DetachAlarm()
-        {
-            SocketConnection.GetInstance().ChatRecv -= ChatRecv;
-            MessageList = null;
-            FriendsImage = null;
         }
 
         // 메세지 전송

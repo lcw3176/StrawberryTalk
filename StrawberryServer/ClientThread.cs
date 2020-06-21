@@ -23,10 +23,7 @@ namespace StrawberryServer
         {
             this.socket = socket;
             socket.SendBufferSize = 0;
-            index = new Index(socket);
-
-            // https://support.microsoft.com/eu-es/help/214397/design-issues-sending-small-data-segments-over-tcp-with-winsock
-
+            index = new Index(socket);            
         }
 
         //Receive 계속 받기
@@ -55,7 +52,6 @@ namespace StrawberryServer
                     if (dataType == (int)PacketType.Text)
                     {
                         string data = Encoding.UTF8.GetString(recv, 4, recvLen - 4);
-                        Console.WriteLine(data);
 
                         router = data.Split('/')[0];
                         param = data.Replace(router + "/", string.Empty);

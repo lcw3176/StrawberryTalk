@@ -24,13 +24,18 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().AuthRecv += AuthRecv;
         }
 
+        private void Detach()
+        {
+            SocketConnection.GetInstance().AuthRecv -= AuthRecv;
+        }
+
         private void AuthRecv(string param)
         {
             if(param == "true")
             {
                 MessageBox.Show("인증이 완료되었습니다. 정상적인 이용이 가능합니다.");
+                Detach();
                 UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-                SocketConnection.GetInstance().AuthRecv -= AuthRecv;
                 update.Execute("Login");
             }
 

@@ -63,19 +63,29 @@ namespace StrawberryClient.Model
         {
             SocketConnection.GetInstance().JoinRecv += JoinRecv;
         }
+        
+        private void Detach()
+        {
+            SocketConnection.GetInstance().JoinRecv -= JoinRecv;
+        }
 
         private void JoinRecv(string param)
         {
-            if (param == "false")
+            if (param == "email")
             {
                 MessageBox.Show("이미 존재하는 계정입니다.");
+            }
+
+            else if(param == "nickname")
+            {
+                MessageBox.Show("이미 존재하는 닉네임입니다.");
             }
 
             else
             {
                 MessageBox.Show("가입 완료! 인증을 완료하셔야 이용 가능합니다.");
+                Detach();
                 UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-                SocketConnection.GetInstance().JoinRecv -= JoinRecv;
                 update.Execute("Auth");
             }
 
@@ -88,8 +98,8 @@ namespace StrawberryClient.Model
 
         public void GoBack()
         {
+            Detach();
             UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-            SocketConnection.GetInstance().JoinRecv -= JoinRecv;
             update.Execute("Login");
         }
 

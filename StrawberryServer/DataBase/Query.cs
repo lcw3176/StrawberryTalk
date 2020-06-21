@@ -36,13 +36,13 @@ namespace StrawberryServer.DataBase
 
         public void initTable()
         {
-            //string s1 = "CREATE table user(" +
-            //    "sid integer PRIMARY KEY AUTOINCREMENT, " +
-            //    "name varchar(30) not null, " +
-            //    "nickname varchar(20) not null, " +
-            //    "password varchar(20) not null, " +
-            //    "auth varchar(5) not null, " +
-            //    "image varchar(40))";
+            string s1 = "CREATE table user(" +
+                "sid integer PRIMARY KEY AUTOINCREMENT, " +
+                "name varchar(30) not null, " +
+                "nickname varchar(10) not null, " +
+                "password varchar(44) not null, " +
+                "auth varchar(5) not null, " +
+                "image varchar(40))";
 
             string s2 = "CREATE table room(" +
                 "sid integer PRIMARY KEY AUTOINCREMENT, " +
@@ -52,7 +52,7 @@ namespace StrawberryServer.DataBase
                 "sid integer PRIMARY KEY AUTOINCREMENT, " +
                 "roomName varchar(30), " +
                 "fromUserName varchar(20), " +
-                "message varchar(100), " +
+                "message varchar(200), " +
                 "foreign key(roomName) " +
                 "references room(name) " +
                 "on update cascade " +
@@ -73,20 +73,20 @@ namespace StrawberryServer.DataBase
             //cmd = new SQLiteCommand(sql, conn);
             //cmd.ExecuteNonQuery();
 
-            sql = "drop table message";
-            cmd = new SQLiteCommand(sql, conn);
-            cmd.ExecuteNonQuery();
-
-            sql = "drop table room";
-            cmd = new SQLiteCommand(sql, conn);
-            cmd.ExecuteNonQuery();
-
-            sql = "drop table friendsList";
-            cmd = new SQLiteCommand(sql, conn);
-            cmd.ExecuteNonQuery();
-
-            //cmd = new SQLiteCommand(s1, conn);
+            //sql = "drop table message";
+            //cmd = new SQLiteCommand(sql, conn);
             //cmd.ExecuteNonQuery();
+
+            //sql = "drop table room";
+            //cmd = new SQLiteCommand(sql, conn);
+            //cmd.ExecuteNonQuery();
+
+            //sql = "drop table friendsList";
+            //cmd = new SQLiteCommand(sql, conn);
+            //cmd.ExecuteNonQuery();
+
+            cmd = new SQLiteCommand(s1, conn);
+            cmd.ExecuteNonQuery();
 
             cmd = new SQLiteCommand(s2, conn);
             cmd.ExecuteNonQuery();
@@ -103,10 +103,10 @@ namespace StrawberryServer.DataBase
 
         }
 
-
-        public string GetNickname(string userId, string userPw)
+        // 유저 로그인 시 사용
+        public string GetNickname(string userEmail, string userPw)
         {
-            string sql = string.Format("SELECT nickname FROM user WHERE name = '{0}' AND password = '{1}'", userId, userPw);
+            string sql = string.Format("SELECT nickname FROM user WHERE name = '{0}' AND password = '{1}'", userEmail, userPw);
             string nickname = string.Empty;
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);
@@ -123,10 +123,30 @@ namespace StrawberryServer.DataBase
             return nickname;
         }
 
-        // 유저 로그인, 특정 유저 닉네임 가져오기, 유저 검색 기능에 사용
-        public string GetNickname(string id)
+        // 이메일 중복검사
+        public string GetEmail(string email)
         {
-            string sql = string.Format("SELECT nickname FROM user WHERE nickname = '{0}'", id);
+            string sql = string.Format("SELECT name FROM user WHERE name = '{0}'", email);
+            string mail = string.Empty;
+
+            SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                mail = reader["name"].ToString();
+            }
+
+            reader.Close();
+            cmd.Dispose();
+
+            return mail;
+        }
+
+        // 특정 유저 닉네임 가져오기, 유저 검색 기능, 닉네임 중복 검사
+        public string GetNickname(string nickname)
+        {
+            string sql = string.Format("SELECT nickname FROM user WHERE nickname = '{0}'", nickname);
             string name = string.Empty;
 
             SQLiteCommand cmd = new SQLiteCommand(sql, conn);

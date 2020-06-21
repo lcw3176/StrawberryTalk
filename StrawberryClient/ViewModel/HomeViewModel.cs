@@ -102,13 +102,14 @@ namespace StrawberryClient.ViewModel
         public HomeViewModel()
         {
             homeModel = new HomeModel();
-            homeModel.changed += OnPropertyUpdate;
             chatCommand = new RelayCommand(chatExecuteMethod);
             findUserCommand = new RelayCommand(findUserExecuteMethod);
             setProfileCommand = new RelayCommand(setProfileExecuteMethod);
             viewProfileCommand = new RelayCommand(viewProfileExecuteMethod);
             addChatCommand = new RelayCommand(addChatExecuteMethod);
             refreshCommand = new RelayCommand(refreshExecuteMethod);
+
+            homeModel.changed += OnPropertyUpdate;
 
             SocketConnection.GetInstance().Send("Success", "null");
         }
@@ -123,7 +124,7 @@ namespace StrawberryClient.ViewModel
         private void addChatExecuteMethod(object obj)
         {
             AddChatViewModel addChatViewModel =  new AddChatViewModel();
-            addChatViewModel.onClose += new AddChatViewModel.Close(chatExecuteMethod);
+            addChatViewModel.onClose += chatExecuteMethod;
             addChatViewModel.Init(friendsList);
         }
 
@@ -178,7 +179,6 @@ namespace StrawberryClient.ViewModel
                     {
                         homeModel.GetUser(i);
                     }
-
                 }
             }
 
@@ -195,7 +195,7 @@ namespace StrawberryClient.ViewModel
             homeModel.addRooms(showedRoomName);
             
             ChatRoomViewModel roomViewModel = new ChatRoomViewModel();
-            roomViewModel.closeEvent += new ChatRoomViewModel.Close(homeModel.Detach);
+            roomViewModel.closeEvent += homeModel.Detach;
 
             ImageSource thumbnail = friendsList.FirstOrDefault(e => e.friendsName == showedRoomName.Split(',')[0]).friendsImage;
             Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();

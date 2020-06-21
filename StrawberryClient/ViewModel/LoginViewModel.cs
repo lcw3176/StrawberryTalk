@@ -43,8 +43,7 @@ namespace StrawberryClient.ViewModel
 
         private void joinExecuteMethod(object obj)
         {
-            UpdateViewCommand update = MainViewModel.GetInstance().updateViewCommand as UpdateViewCommand;
-            update.Execute(obj);
+            loginModel.GoJoin();
         }
 
         private void LoginExecuteMethod(object obj)

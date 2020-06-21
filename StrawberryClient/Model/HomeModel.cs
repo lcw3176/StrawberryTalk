@@ -374,7 +374,6 @@ namespace StrawberryClient.Model
 
                     else if (collection == collectionName.chatRoomList.ToString())
                     {
-                        Console.WriteLine("chatroom update");
                         chatRoomsList.FirstOrDefault(e => e.roomName == userId).roomImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
                         changed("chatRoomsList");
                     }

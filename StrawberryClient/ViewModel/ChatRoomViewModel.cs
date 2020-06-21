@@ -92,10 +92,11 @@ namespace StrawberryClient.ViewModel
         public ChatRoomViewModel()
         {
             chatRoomModel = new ChatRoomModel();
-            chatRoomModel.update += new ChatRoomModel.Update(NotifyUpdate);
-            chatRoomModel.move += new ChatRoomModel.MoveScroll(MoveScrollToMiddle);
             sendMessageCommand = new RelayCommand(sendExecuteMethod);
             closeCommand = new RelayCommand(closeExecuteMethod);
+
+            chatRoomModel.update += NotifyUpdate;
+            chatRoomModel.move += MoveScrollToMiddle;
         }
 
         public void AttachSocket()
@@ -158,7 +159,7 @@ namespace StrawberryClient.ViewModel
             roomView = new ChatRoomView();
             roomView.DataContext = this;
             this.scroll = roomView.scrollView;
-            roomView.endOfScroll += new ChatRoomView.scrollEnd(scrollEnd);
+            roomView.endOfScroll += scrollEnd;
 
             roomView.Show();           
         }
@@ -168,9 +169,9 @@ namespace StrawberryClient.ViewModel
         private void closeExecuteMethod(object obj)
         {
             DetachSocket();
-            roomView.endOfScroll -= new ChatRoomView.scrollEnd(scrollEnd);
-            chatRoomModel.update -= new ChatRoomModel.Update(NotifyUpdate);
-            chatRoomModel.move -= new ChatRoomModel.MoveScroll(MoveScrollToMiddle);
+            roomView.endOfScroll -= scrollEnd;
+            chatRoomModel.update -= NotifyUpdate;
+            chatRoomModel.move -= MoveScrollToMiddle;
             closeEvent(roomName);
             (obj as Window).Close();
         }

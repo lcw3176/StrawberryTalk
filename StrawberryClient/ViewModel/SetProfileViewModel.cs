@@ -95,6 +95,7 @@ namespace StrawberryClient.ViewModel
             {
                 DataContext = this,
             };
+
             setProfile.Show();
         }
 
