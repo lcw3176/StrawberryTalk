@@ -30,7 +30,7 @@ namespace StrawberryClient.Model
         List<string> imageList = new List<string>();
         
         enum collectionName { UserImage, chatRoomList, friendsList };
-        
+        enum HomeInfo { Init, Find, Refresh, Chat }
 
         public string FindUser
         {
@@ -87,15 +87,16 @@ namespace StrawberryClient.Model
         }
 
 
-        private void HomeRecv(string param)
+        private void HomeRecv(int cmd, string data)
         {
             // 초기 세팅
-            if(param.Contains("<INIT>"))
+            if(cmd == (int)HomeInfo.Init)
             {
-                this.userId = param.Split(new string[] { "<NICK>" }, StringSplitOptions.None)[0];
+                this.userId = data.Split('/')[0];
                 GetImage(userId, collectionName.UserImage);
+                data = data.Remove(0, userId.Length + 1);
 
-                string[] friends = param.Split(new string[] { "<FRIEND>" }, StringSplitOptions.None)[1].Split(',');
+                string[] friends = data.Split('/')[0].Split(',');
 
                 // 친구 목록이 비어있지 않았을 때
                 if (!string.IsNullOrEmpty(friends[0]))
@@ -112,12 +113,15 @@ namespace StrawberryClient.Model
                             });
 
                             GetImage(name, collectionName.friendsList);
+                            data = data.Remove(0, name.Length + 1);
+
                         }
                     });
-                  
+
                 }
 
-                string[] rooms = param.Split(new string[] { "<ROOM>" }, StringSplitOptions.None)[1].Split(',');
+
+                string[] rooms = data.Split('/')[0].Split(',');
 
                 if (!string.IsNullOrEmpty(rooms[0]))
                 {
@@ -154,23 +158,22 @@ namespace StrawberryClient.Model
             }
 
             // 유저 검색했을 때
-            if (param.Contains("<FIND>"))
+            if (cmd == (int)HomeInfo.Find)
             {
-                string name = param.Split(new string[] {"<FIND>" }, StringSplitOptions.None)[1];
-                addFriend(name);
+                addFriend(data);
             }
 
             // 프로필 사진 교체 시
-            if (param.Contains("<REFRESH>"))
+            if (cmd == (int)HomeInfo.Refresh)
             {
                 Refresh();
             }
 
             // 다른 사람한테 채팅 왔을 때
-            if(param.Contains("<CHAT>"))
+            if(cmd == (int)HomeInfo.Chat)
             {
-                string[] data= param.Split(new string[] { "<AND>" }, StringSplitOptions.None);
-                string message = data[1];
+                string room = data.Split('/')[0];
+                string message = data.Remove(0, room.Length + 1);
 
                 if (activateRoom.Count == 0)
                 {
@@ -179,7 +182,6 @@ namespace StrawberryClient.Model
 
                 else
                 {
-                    string room = data[0];
 
                     foreach (string i in activateRoom)
                     {
@@ -318,21 +320,17 @@ namespace StrawberryClient.Model
         }
 
         // 알람
-        private void alarm(string param)
+        private void alarm(string data)
         {
-            string[] recvData = param.Replace("<CHAT>", string.Empty).Split('&'); 
-            string userName = recvData[0];
-            string message = recvData[1];
-
-            if (userName != this.userId && recvData.Length <= 2)
+            string name = data.Split('&')[0];
+            string message = data.Split('&')[1];
+            App.Current.Dispatcher.Invoke((Action)delegate
             {
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    AlarmView alarmView = new AlarmView(userName, message);
-                    alarmView.Topmost = true;
-                    alarmView.Show();
-                });
-            }
+                AlarmView alarmView = new AlarmView(name, message);
+                alarmView.Topmost = true;
+                alarmView.Show();
+            });
+            
         }
 
 

@@ -12,7 +12,7 @@ namespace StrawberryClient.Model
         private string userNickname;
 
         private StringBuilder serverPw = new StringBuilder();
-
+        enum JoinInfo { True, False, Email, Nickname }
         public string UserNickname
         {
             get { return userNickname; }
@@ -69,14 +69,14 @@ namespace StrawberryClient.Model
             SocketConnection.GetInstance().JoinRecv -= JoinRecv;
         }
 
-        private void JoinRecv(string param)
+        private void JoinRecv(int cmd, string data)
         {
-            if (param == "email")
+            if (cmd == (int)JoinInfo.Email)
             {
                 MessageBox.Show("이미 존재하는 계정입니다.");
             }
 
-            else if(param == "nickname")
+            else if(cmd == (int)JoinInfo.Nickname)
             {
                 MessageBox.Show("이미 존재하는 닉네임입니다.");
             }

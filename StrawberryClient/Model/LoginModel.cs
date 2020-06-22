@@ -13,6 +13,8 @@ namespace StrawberryClient.Model
         private string userPw = string.Empty;
         private StringBuilder serverPw = new StringBuilder();
 
+        enum LoginInfo { True, False, Already, Auth }
+
         public string UserId
         {
             get { return userId; }
@@ -72,19 +74,19 @@ namespace StrawberryClient.Model
             update.Execute("Join");
         }
 
-        private void LoginRecv(string param)
+        private void LoginRecv(int cmd, string data)
         {
-            if (param == "false")
+            if (cmd == (int)LoginInfo.False)
             {
                 MessageBox.Show("다시 확인 바랍니다.");
             }
 
-            else if (param == "already")
+            else if (cmd == (int)LoginInfo.Already)
             {
                 MessageBox.Show("다른 곳에서 접속 중입니다. 연결을 끊고 시도해 주세요.");
             }
 
-            else if (param == "auth")
+            else if (cmd == (int)LoginInfo.Auth)
             {
                 MessageBox.Show("인증받지 않은 아이디입니다. 이메일 인증을 진행해 주세요.");
                 Detach();

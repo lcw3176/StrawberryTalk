@@ -16,8 +16,6 @@ namespace StrawberryClient.ViewModel
 {
     class HomeViewModel : BaseViewModel
     {
-
-        public event PropertyChangedEventHandler PropertyChanged;
         public HomeModel homeModel;
         public ICommand findUserCommand { get; set; }
         public ICommand setProfileCommand { get; set; }

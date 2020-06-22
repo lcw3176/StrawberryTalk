@@ -53,12 +53,8 @@ namespace StrawberryClient.Model
                     //    resizeImage.Dispose();
                     //}
 
-                    //else
-                    //{
 
-                    //}
-
-                    SocketConnection.GetInstance().ImageSend(ms.ToArray());
+                    SocketConnection.GetInstance().Send(ms.ToArray());
 
                     image.Dispose();
                     param.Dispose();

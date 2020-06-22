@@ -332,15 +332,13 @@ namespace StrawberryServer.DataBase
             StringBuilder data = new StringBuilder();
 
             data.Append(userNickname);
-            data.Append("<NICK>");
+            data.Append("/");
 
-            data.Append("<FRIEND>");
             data.Append(string.Join(",", friends));
-            data.Append("<FRIEND>");
+            data.Append("/");
 
-            data.Append("<ROOM>");
             data.Append(string.Join(",", room));
-            data.Append("<ROOM>");
+            data.Append("/");
 
             reader.Close();
             cmd.Dispose();

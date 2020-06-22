@@ -13,6 +13,8 @@ namespace StrawberryServer
         Dictionary<string, Socket> userDic = new Dictionary<string, Socket>();
         enum PacketType { Text, Image };
         enum destination { Login, Join, Auth, Home, ChatRoom, Both };
+        enum ChatInfo { Init, First, Plus, Chat }
+
         public static RoomManager GetInstance()
         {
             if(instance == null)
@@ -81,9 +83,10 @@ namespace StrawberryServer
 
             byte[] type = BitConverter.GetBytes((int)PacketType.Text);
             byte[] togo = BitConverter.GetBytes((int)destination.Both);
-            byte[] text = Encoding.UTF8.GetBytes(roomName + "<AND>" + sendData);
+            byte[] res = BitConverter.GetBytes((int)ChatInfo.Chat);
+            byte[] text = Encoding.UTF8.GetBytes(roomName + "/" + sendData);
 
-            byte[] send = new byte[type.Length + togo.Length + text.Length];
+            byte[] send = new byte[type.Length + togo.Length + res.Length + text.Length];
 
             byte[] size;
 
@@ -91,7 +94,8 @@ namespace StrawberryServer
 
             type.CopyTo(send, 0);
             togo.CopyTo(send, 4);
-            text.CopyTo(send, 8);
+            res.CopyTo(send, 8);
+            text.CopyTo(send, 12);
 
             foreach (string i in key)
             {

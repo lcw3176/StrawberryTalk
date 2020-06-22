@@ -24,7 +24,7 @@ namespace StrawberryClient.Model
         private ImageSource profileImage;
         private Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
         ObservableCollection<MessageList> messageList = new ObservableCollection<MessageList>();
-
+        enum ChatInfo { Init, First, Plus, Chat }
         public Dictionary<string, ImageSource> FriendsImage
         {
             get { return friendsImage; }
@@ -86,23 +86,23 @@ namespace StrawberryClient.Model
 
         string isSame = string.Empty;
 
-        private void ChatRecv(string param)
+        private void ChatRecv(int cmd, string data)
         {
-
-            if(param.Contains("<FIRST>"))
+            //중복 제거
+            if(cmd == (int)ChatInfo.First)
             {
                 return;
             }
 
-            if (param.Contains("<CHAT>"))
+            if (cmd == (int)ChatInfo.Chat)
             {
-                string[] data = param.Replace("<CHAT>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
-                string room = data[0];
+                string room = data.Split('/')[0];
+                string messageChunk = data.Remove(0, room.Length + 1);
 
-                if(room == this.roomName)
+                if (room == this.roomName)
                 {
-                    string userName = data[1].Split('&')[0];
-                    string message = data[1].Split('&')[1];
+                    string userName = messageChunk.Split('&')[0];
+                    string message = messageChunk.Split('&')[1];
 
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
@@ -137,14 +137,15 @@ namespace StrawberryClient.Model
             }
 
             // 채팅방 초기화, 첫 메세지 세팅
-            if (param.Contains("<INIT>"))
+            if (cmd == (int)ChatInfo.Init)
             {
-                string[] data = param.Replace("<INIT>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
-                string room = data[0];
+                string room = data.Split('/')[0];
+                string messageChunk = data.Remove(0, room.Length + 1);
 
-                if(room == this.RoomName)
+
+                if (room == this.RoomName)
                 {
-                    string[] msg = data[1].Split('&');
+                    string[] msg = messageChunk.Split('&');
                     string[] temp;
 
                     // [0] 이름, [1] 메세지
@@ -185,19 +186,22 @@ namespace StrawberryClient.Model
             }
 
             // 메세지 추가 로딩
-            if (param.Contains("<PLUS>"))
+            if (cmd == (int)ChatInfo.Plus)
             {
-                string[] data = param.Replace("<PLUS>", string.Empty).Split(new string[] { "<AND>" }, StringSplitOptions.None);
-                string[] temp;
+                string room = data.Split('/')[0];
+                string messageChunk = data.Remove(0, room.Length + 1);
 
-                if (data.Length > 2)
+
+                if (data.Length > 2 && room == this.roomName)
                 {
+                    string[] msg = messageChunk.Split('&');
+
                     // [0] 이름, [1] 메세지
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
                         for (int i = 0; i < data.Length; i++)
                         {
-                            temp = data[i].Split(',');
+                            string[] temp = msg[i].Split(',');
 
                             // is Me
                             if (userId == temp[0])

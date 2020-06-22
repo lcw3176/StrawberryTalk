@@ -9,7 +9,6 @@ namespace StrawberryClient.ViewModel
 {
     class LoginViewModel : BaseViewModel
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         public ICommand loginCommand { get; set; }
         public ICommand joinCommand { get; set; }
         private LoginModel loginModel;

@@ -16,12 +16,19 @@ namespace StrawberryClient.ViewModel
         AddChatModel addChatModel;
         public ICommand checkCommand { get; set; }
         public ICommand completeCommand { get; set; }
-        List<string> userList = new List<string>();
         public event PropertyChangedEventHandler PropertyChanged;
 
         public delegate void Close(string userName);
         public event Close onClose;
 
+        public List<string> userList
+        {
+            get { return addChatModel.UserLIst; }
+            set
+            {
+                addChatModel.UserLIst = value;
+            }
+        }
 
         public ObservableCollection<Friends> addChatList
         {
@@ -47,7 +54,7 @@ namespace StrawberryClient.ViewModel
 
         }
 
-        // 
+
         private void checkExecuteMethod(object obj)
         {
             var id = userList.Find(e => e == (obj as TextBlock).Text);
@@ -67,6 +74,7 @@ namespace StrawberryClient.ViewModel
         // 선택된 유저 리스트 넘긴 후 종료
         private void completeExecuteMethod(object obj)
         {
+            userList.Sort();
             onClose(string.Join(",", userList));
             (obj as Window).Close();
         }

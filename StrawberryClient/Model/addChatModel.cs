@@ -8,6 +8,13 @@ namespace StrawberryClient.Model
     {
         private ObservableCollection<Friends> addChatList = new ObservableCollection<Friends>();
         private List<string> checkList = new List<string>();
+        private List<string> userList = new List<string>();
+
+        public List<string> UserLIst
+        {
+            get { return userList; }
+            set { userList = value; }
+        }
 
         public ObservableCollection<Friends> AddChatList
         {

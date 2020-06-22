@@ -10,7 +10,7 @@ namespace StrawberryClient.Model
 
     class SocketConnection
     {
-        public delegate void Receive(string param);
+        public delegate void Receive(int cmd, string data);
         public event Receive ChatRecv;
         public event Receive HomeRecv;
         public event Receive LoginRecv;
@@ -20,7 +20,7 @@ namespace StrawberryClient.Model
         public delegate void ImageReceive(string id, byte[] image);
         public event ImageReceive imageRecv;
 
-        enum PacketType { Text, Image };
+        enum PacketType { Text, Image, Close };
         enum destination { Login, Join, Auth, Home, ChatRoom, Both };
         public static SocketConnection Instance;
         private Socket socket;
@@ -57,12 +57,18 @@ namespace StrawberryClient.Model
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Parse("172.30.1.37"), 3000));
+                GetSocket().Connect(new IPEndPoint(IPAddress.Parse("119.192.119.37"), 2580));
             }            
         }
 
         public void DisConnect()
         {
+            byte[] send = BitConverter.GetBytes((int)PacketType.Close);
+            byte[] size = BitConverter.GetBytes(send.Length);
+
+            GetSocket().Send(size, 0, 4, SocketFlags.None);
+            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
+
             GetSocket().Close();
         }
 
@@ -104,28 +110,29 @@ namespace StrawberryClient.Model
 
                     if(dataType == (int)PacketType.Text)
                     {
-                        string data = Encoding.UTF8.GetString(recv, 8, recv.Length - 8);
+                        int cmd = BitConverter.ToInt32(recv, 8);
+                        string data = Encoding.UTF8.GetString(recv, 12, recv.Length - 12);
 
                         switch (viewModel)
                         {
                             case (int)destination.Login:
-                                LoginRecv(data);
+                                LoginRecv(cmd, data);
                                 break;
                             case (int)destination.Join:
-                                JoinRecv(data);
+                                JoinRecv(cmd, data);
                                 break;
                             case (int)destination.Auth:
-                                AuthRecv(data);
+                                AuthRecv(cmd, data);
                                 break;
                             case (int)destination.Home:
-                                HomeRecv(data);
+                                HomeRecv(cmd, data);
                                 break;
                             case (int)destination.ChatRoom:
-                                ChatRecv(data);
+                                ChatRecv(cmd, data);
                                 break;
                             case (int)destination.Both:
-                                HomeRecv(data);
-                                ChatRecv?.Invoke(data);
+                                HomeRecv(cmd, data);
+                                ChatRecv?.Invoke(cmd, data);
                                 break;
                             default:
                                 break;
@@ -152,26 +159,6 @@ namespace StrawberryClient.Model
         }
 
        
-        public void ImageSend(byte[] image)
-        {
-
-            byte[] packetType = BitConverter.GetBytes((int)PacketType.Image);
-            byte[] text = Encoding.UTF8.GetBytes("MyImage");
-            byte[] send = new byte[packetType.Length + text.Length + image.Length];
-
-            packetType.CopyTo(send, 0);
-            text.CopyTo(send, 4);
-            image.CopyTo(send, 11);
-
-            byte[] size;
-
-            size = BitConverter.GetBytes(send.Length);
-
-            GetSocket().Send(size, 0, 4, SocketFlags.None);
-
-            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
-        }
-
         public void Send(string request, params string[] queryString)
         {
             StringBuilder sb = new StringBuilder();
@@ -201,6 +188,27 @@ namespace StrawberryClient.Model
             GetSocket().Send(send, 0, send.Length, SocketFlags.None);
 
         }
+
+        public void Send(byte[] image)
+        {
+
+            byte[] packetType = BitConverter.GetBytes((int)PacketType.Image);
+            byte[] text = Encoding.UTF8.GetBytes("MyImage");
+            byte[] send = new byte[packetType.Length + text.Length + image.Length];
+
+            packetType.CopyTo(send, 0);
+            text.CopyTo(send, 4);
+            image.CopyTo(send, 11);
+
+            byte[] size;
+
+            size = BitConverter.GetBytes(send.Length);
+
+            GetSocket().Send(size, 0, 4, SocketFlags.None);
+
+            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
+        }
+
 
     }
 }

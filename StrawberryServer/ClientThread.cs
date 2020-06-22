@@ -11,7 +11,7 @@ namespace StrawberryServer
     {
         private Socket socket;
         Index index;
-        enum PacketType { Text, Image };
+        enum PacketType { Text, Image, Close };
         enum destination { Login, Join, Auth, Home, ChatRoom, Both };
 
         public ClientThread()
@@ -33,11 +33,11 @@ namespace StrawberryServer
             string param;
             int dataType;
 
-            while (true)
+            while (socket.Connected)
             {
                 try
                 {
-                    byte[] byteData; 
+                    byte[] byteData = null; 
 
                     byte[] recvSize = new byte[4];
                     socket.Receive(recvSize, 0, 4, SocketFlags.None);
@@ -62,7 +62,7 @@ namespace StrawberryServer
                     }
 
                     // 이미지 전송
-                    else
+                    else if(dataType == (int)PacketType.Image)
                     {
                         router = Encoding.UTF8.GetString(recv, 4, 7);
 
@@ -71,25 +71,34 @@ namespace StrawberryServer
                         byteData = (byte[])routes.Invoke(index, new object[] { recv });
                     }
 
+                    // 종료 신호
+                    else
+                    {
+                        Close();
+                        break;
+                    }
+
                     byte[] sendSize;
-
                     sendSize = BitConverter.GetBytes(byteData.Length);
+
                     socket.Send(sendSize, 0, 4, SocketFlags.None);
-
                     socket.Send(byteData, 0, byteData.Length, SocketFlags.None);
-
-                    Array.Clear(recv, 0, recv.Length);
-                    Array.Clear(byteData, 0, byteData.Length);
                 }
 
-                catch
+                catch(Exception ex)
                 {
-                    Console.WriteLine("유저 연결 종료");
-                    RoomManager.GetInstance().RemoveUser(socket);
-                    socket.Close();
+                    Console.WriteLine(ex);
+                    Close();
                     break;
                 }
             }
+        }
+
+        private void Close()
+        {
+            Console.WriteLine("유저 연결 종료");
+            RoomManager.GetInstance().RemoveUser(socket);
+            socket.Close();
         }
     }
 }

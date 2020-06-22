@@ -108,6 +108,7 @@ namespace StrawberryClient.ViewModel
         {
             chatRoomModel.DetachAlarm();
         }
+
         double height;
 
         // 스크롤 끝까지 당겼을 때 메세지 추가 요청

@@ -25,6 +25,7 @@ namespace StrawberryClient
         {
             InitializeComponent();
             DataContext = MainViewModel.GetInstance();
+            // 클로즈 부분 수정해야됨
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
