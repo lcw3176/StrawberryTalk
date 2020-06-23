@@ -3,6 +3,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace StrawberryServer
 {
@@ -30,11 +31,10 @@ namespace StrawberryServer
             AppDomain.CurrentDomain.ProcessExit += Exit;
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 3000));
+            int count = 0;
 
             Query.GetInstance().Open();
             //Query.GetInstance().initTable();
-
-
             socket.Listen(10);
 
             while (true)
@@ -42,10 +42,9 @@ namespace StrawberryServer
                 Socket user = socket.Accept();
                 ClientThread client = new ClientThread();
                 client.SetInfo(user);
-
-                Thread recv = new Thread(client.Start);
-                recv.Start();
-
+                Task.Run(() => client.Start());
+                count++;
+                Console.WriteLine("현재 접속자 수: " + count);
             }
         }
 

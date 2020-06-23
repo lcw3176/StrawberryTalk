@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StrawberryServer.Enumerate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -11,9 +12,6 @@ namespace StrawberryServer
     {
         public static RoomManager instance;
         Dictionary<string, Socket> userDic = new Dictionary<string, Socket>();
-        enum PacketType { Text, Image };
-        enum destination { Login, Join, Auth, Home, ChatRoom, Both };
-        enum ChatInfo { Init, First, Plus, Chat }
 
         public static RoomManager GetInstance()
         {
@@ -82,8 +80,8 @@ namespace StrawberryServer
 
 
             byte[] type = BitConverter.GetBytes((int)PacketType.Text);
-            byte[] togo = BitConverter.GetBytes((int)destination.Both);
-            byte[] res = BitConverter.GetBytes((int)ChatInfo.Chat);
+            byte[] togo = BitConverter.GetBytes((int)Destination.Both);
+            byte[] res = BitConverter.GetBytes((int)ResponseInfo.Chat);
             byte[] text = Encoding.UTF8.GetBytes(roomName + "/" + sendData);
 
             byte[] send = new byte[type.Length + togo.Length + res.Length + text.Length];

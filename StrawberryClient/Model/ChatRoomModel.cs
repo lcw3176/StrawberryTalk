@@ -1,4 +1,5 @@
-﻿using StrawberryClient.Model.ObservableCollection;
+﻿using StrawberryClient.Model.Enumerate;
+using StrawberryClient.Model.ObservableCollection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,7 +25,6 @@ namespace StrawberryClient.Model
         private ImageSource profileImage;
         private Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
         ObservableCollection<MessageList> messageList = new ObservableCollection<MessageList>();
-        enum ChatInfo { Init, First, Plus, Chat }
         public Dictionary<string, ImageSource> FriendsImage
         {
             get { return friendsImage; }
@@ -88,13 +88,12 @@ namespace StrawberryClient.Model
 
         private void ChatRecv(int cmd, string data)
         {
-            //중복 제거
-            if(cmd == (int)ChatInfo.First)
+            if(cmd == (int)ResponseInfo.First)
             {
                 return;
             }
 
-            if (cmd == (int)ChatInfo.Chat)
+            if (cmd == (int)ResponseInfo.Chat)
             {
                 string room = data.Split('/')[0];
                 string messageChunk = data.Remove(0, room.Length + 1);
@@ -137,7 +136,7 @@ namespace StrawberryClient.Model
             }
 
             // 채팅방 초기화, 첫 메세지 세팅
-            if (cmd == (int)ChatInfo.Init)
+            if (cmd == (int)ResponseInfo.Init)
             {
                 string room = data.Split('/')[0];
                 string messageChunk = data.Remove(0, room.Length + 1);
@@ -186,20 +185,22 @@ namespace StrawberryClient.Model
             }
 
             // 메세지 추가 로딩
-            if (cmd == (int)ChatInfo.Plus)
+            if (cmd == (int)ResponseInfo.Plus)
             {
                 string room = data.Split('/')[0];
                 string messageChunk = data.Remove(0, room.Length + 1);
 
 
-                if (data.Length > 2 && room == this.roomName)
+                if (messageChunk.Length > 2 && room == this.roomName)
                 {
                     string[] msg = messageChunk.Split('&');
+
+                    Console.WriteLine(messageChunk);
 
                     // [0] 이름, [1] 메세지
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
-                        for (int i = 0; i < data.Length; i++)
+                        for (int i = 0; i < msg.Length; i++)
                         {
                             string[] temp = msg[i].Split(',');
 
@@ -237,6 +238,8 @@ namespace StrawberryClient.Model
 
                     pageNation++;
                     move();
+
+                    Console.WriteLine(pageNation);
                 }                
             }
 

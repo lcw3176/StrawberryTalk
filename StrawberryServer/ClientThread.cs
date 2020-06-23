@@ -96,7 +96,6 @@ namespace StrawberryServer
 
         private void Close()
         {
-            Console.WriteLine("유저 연결 종료");
             RoomManager.GetInstance().RemoveUser(socket);
             socket.Close();
         }

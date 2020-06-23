@@ -1,4 +1,5 @@
 ﻿using StrawberryClient.Command;
+using StrawberryClient.Model.Enumerate;
 using StrawberryClient.ViewModel;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,8 +13,6 @@ namespace StrawberryClient.Model
         private string userId;
         private string userPw = string.Empty;
         private StringBuilder serverPw = new StringBuilder();
-
-        enum LoginInfo { True, False, Already, Auth }
 
         public string UserId
         {
@@ -57,7 +56,11 @@ namespace StrawberryClient.Model
 
         public LoginModel()
         {
-            SocketConnection.GetInstance().Connect();
+            if(!SocketConnection.GetInstance().Connect())
+            {
+                MessageBox.Show("서버가 응답하지 않습니다. 잠시후 다시 시도해 주시기 바랍니다.");
+                App.Current.Shutdown();
+            }
             SocketConnection.GetInstance().StartRecv();
             SocketConnection.GetInstance().LoginRecv += LoginRecv;
         }
@@ -76,17 +79,17 @@ namespace StrawberryClient.Model
 
         private void LoginRecv(int cmd, string data)
         {
-            if (cmd == (int)LoginInfo.False)
+            if (cmd == (int)ResponseInfo.False)
             {
                 MessageBox.Show("다시 확인 바랍니다.");
             }
 
-            else if (cmd == (int)LoginInfo.Already)
+            else if (cmd == (int)ResponseInfo.Already)
             {
                 MessageBox.Show("다른 곳에서 접속 중입니다. 연결을 끊고 시도해 주세요.");
             }
 
-            else if (cmd == (int)LoginInfo.Auth)
+            else if (cmd == (int)ResponseInfo.Auth)
             {
                 MessageBox.Show("인증받지 않은 아이디입니다. 이메일 인증을 진행해 주세요.");
                 Detach();

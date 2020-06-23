@@ -67,6 +67,10 @@
     <Compile Include="Model\AddChatModel.cs" />
     <Compile Include="Model\AuthModel.cs" />
     <Compile Include="Model\ChatRoomModel.cs" />
+    <Compile Include="Model\Enumerate\CollectionName.cs" />
+    <Compile Include="Model\Enumerate\Destination.cs" />
+    <Compile Include="Model\Enumerate\PacketType.cs" />
+    <Compile Include="Model\Enumerate\ResponseInfo.cs" />
     <Compile Include="Model\HomeModel.cs" />
     <Compile Include="Model\JoinModel.cs" />
     <Compile Include="Model\ObservableCollection\ChatRooms.cs" />

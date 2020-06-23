@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StrawberryClient.Model.Enumerate;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -20,8 +21,6 @@ namespace StrawberryClient.Model
         public delegate void ImageReceive(string id, byte[] image);
         public event ImageReceive imageRecv;
 
-        enum PacketType { Text, Image, Close };
-        enum destination { Login, Join, Auth, Home, ChatRoom, Both };
         public static SocketConnection Instance;
         private Socket socket;
         private bool isRun = false;
@@ -53,23 +52,39 @@ namespace StrawberryClient.Model
             return socket;
         }
 
-        public void Connect()
+        public bool Connect()
         {
             if(!GetSocket().Connected)
             {
-                GetSocket().Connect(new IPEndPoint(IPAddress.Parse("119.192.119.37"), 2580));
-            }            
+                try
+                {
+                    GetSocket().Connect(new IPEndPoint(IPAddress.Parse("172.30.1.26"), 3000));
+                }
+                
+
+                catch(SocketException)
+                {
+                    return false;
+                }
+                
+            }
+
+            return true;
         }
 
         public void DisConnect()
         {
-            byte[] send = BitConverter.GetBytes((int)PacketType.Close);
-            byte[] size = BitConverter.GetBytes(send.Length);
+            if(GetSocket().Connected)
+            {
+                byte[] send = BitConverter.GetBytes((int)PacketType.Close);
+                byte[] size = BitConverter.GetBytes(send.Length);
 
-            GetSocket().Send(size, 0, 4, SocketFlags.None);
-            GetSocket().Send(send, 0, send.Length, SocketFlags.None);
+                GetSocket().Send(size, 0, 4, SocketFlags.None);
+                GetSocket().Send(send, 0, send.Length, SocketFlags.None);
 
-            GetSocket().Close();
+                GetSocket().Close();
+            }
+
         }
 
 
@@ -85,7 +100,6 @@ namespace StrawberryClient.Model
         }
 
 
-        // 로그인 성공 시 시작됨, 지속적으로 받음
         private void Run()
         {
             byte[] recvSize;
@@ -115,22 +129,22 @@ namespace StrawberryClient.Model
 
                         switch (viewModel)
                         {
-                            case (int)destination.Login:
+                            case (int)Destination.Login:
                                 LoginRecv(cmd, data);
                                 break;
-                            case (int)destination.Join:
+                            case (int)Destination.Join:
                                 JoinRecv(cmd, data);
                                 break;
-                            case (int)destination.Auth:
+                            case (int)Destination.Auth:
                                 AuthRecv(cmd, data);
                                 break;
-                            case (int)destination.Home:
+                            case (int)Destination.Home:
                                 HomeRecv(cmd, data);
                                 break;
-                            case (int)destination.ChatRoom:
+                            case (int)Destination.ChatRoom:
                                 ChatRecv(cmd, data);
                                 break;
-                            case (int)destination.Both:
+                            case (int)Destination.Both:
                                 HomeRecv(cmd, data);
                                 ChatRecv?.Invoke(cmd, data);
                                 break;
@@ -146,6 +160,12 @@ namespace StrawberryClient.Model
                         imageRecv(userName, recv);
                     }
                     
+                }
+
+                catch(TimeoutException)
+                {
+                    Console.WriteLine("timeout");
+                    break;
                 }
 
                 catch (Exception ex)

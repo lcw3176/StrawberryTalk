@@ -81,7 +81,7 @@ CREATE TABLE user(
 </details>
 
 ## 통신 규약
-|CRUD|Route|
+|CRUD|Request|
 |-----------|--------|
 |로그인|Login/{id,pw}|
 |회원가입|Join/{id,pw}|
@@ -132,6 +132,20 @@ CREATE TABLE user(
 * HMAC-SHA256 사용
 * 비밀키는 환경변수에 저장, 필요시 읽어옴
 
+#### Enumerate.Destination.cs
+* 전송할 데이터가 가야할 Model 이름
+* Both는 Home, ChatRoom 두 Model을 가리킴, 채팅 알람 작동 여부를 위해 사용.
+
+#### Enumerate.PacketType.cs
+* 전송할 데이터의 타입
+* Text와 Image를 구분, 다른 방식으로 처리가 가능하게 됨.
+
+#### Enumerate.ResponseInfo.cs
+* 전송할 데이터가 해야 할 일
+* 단순한 성공, 실패 여부 Or 함께 전송되는 데이터의 역할을 알려줌
+* Ex) Init: 전송된 데이터를 이용해 View를 초기화, Plus: 전송된 데이터를 채팅방 메세지 목록에 추가
+
+
 
 ## 작동 모습
 ### 로그인, 회원가입(로그인, 회원가입, 인증)
@@ -154,3 +168,9 @@ CREATE TABLE user(
   <img width="300" src="https://user-images.githubusercontent.com/59993347/85220647-39b26a80-b3e8-11ea-9e05-4c323645d8b2.png">
   <img width="300" src="https://user-images.githubusercontent.com/59993347/85220648-3a4b0100-b3e8-11ea-8b61-7db7c8ad71a3.png">
  </div>
+
+
+##### 기록장
+#### 20.06.23
+* 서버 구조가 연결이 들어오는 대로 Thread를 생성하는 방식이어서 접속은 빨랐으나 500명 접속이 넘어가면 서버가 터졌음
+* ThreadPool을 사용하는 Task 구조로 바꿈,  현재 1001명 접속까지 작동 확인, 

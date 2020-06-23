@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Net.WebSockets;
+using StrawberryClient.Model.Enumerate;
 
 namespace StrawberryClient.Model
 {
@@ -29,8 +30,6 @@ namespace StrawberryClient.Model
         ObservableCollection<ChatRooms> chatRoomsList = new ObservableCollection<ChatRooms>();
         List<string> imageList = new List<string>();
         
-        enum collectionName { UserImage, chatRoomList, friendsList };
-        enum HomeInfo { Init, Find, Refresh, Chat }
 
         public string FindUser
         {
@@ -90,14 +89,15 @@ namespace StrawberryClient.Model
         private void HomeRecv(int cmd, string data)
         {
             // 초기 세팅
-            if(cmd == (int)HomeInfo.Init)
+            if(cmd == (int)ResponseInfo.Init)
             {
+                Console.WriteLine(data);
                 this.userId = data.Split('/')[0];
-                GetImage(userId, collectionName.UserImage);
+                GetImage(userId, CollectionName.UserImage);
+
                 data = data.Remove(0, userId.Length + 1);
 
                 string[] friends = data.Split('/')[0].Split(',');
-
                 // 친구 목록이 비어있지 않았을 때
                 if (!string.IsNullOrEmpty(friends[0]))
                 {
@@ -112,14 +112,18 @@ namespace StrawberryClient.Model
                                 viewProfileCommand = viewProfileCommand,
                             });
 
-                            GetImage(name, collectionName.friendsList);
+                            GetImage(name, CollectionName.friendsList);
                             data = data.Remove(0, name.Length + 1);
-
                         }
                     });
 
                 }
 
+                // 친구 목록 비었을 때
+                else
+                {
+                    data = data.Remove(0, 1);
+                }
 
                 string[] rooms = data.Split('/')[0].Split(',');
 
@@ -150,7 +154,7 @@ namespace StrawberryClient.Model
                                 roomCommand = chatCommand,
                             });
 
-                            GetImage(filteredRoomName, collectionName.chatRoomList);
+                            GetImage(filteredRoomName, CollectionName.chatRoomList);
                             tempRoomName.Clear();
                         }
                     });
@@ -158,19 +162,19 @@ namespace StrawberryClient.Model
             }
 
             // 유저 검색했을 때
-            if (cmd == (int)HomeInfo.Find)
+            if (cmd == (int)ResponseInfo.Find)
             {
                 addFriend(data);
             }
 
             // 프로필 사진 교체 시
-            if (cmd == (int)HomeInfo.Refresh)
+            if (cmd == (int)ResponseInfo.Refresh)
             {
                 Refresh();
             }
 
             // 다른 사람한테 채팅 왔을 때
-            if(cmd == (int)HomeInfo.Chat)
+            if(cmd == (int)ResponseInfo.Chat)
             {
                 string room = data.Split('/')[0];
                 string message = data.Remove(0, room.Length + 1);
@@ -280,7 +284,7 @@ namespace StrawberryClient.Model
                 });
             });
 
-            GetImage(name, collectionName.friendsList);
+            GetImage(name, CollectionName.friendsList);
         }
 
         // 채팅방 목록 추가
@@ -300,7 +304,7 @@ namespace StrawberryClient.Model
                     });
                 });
 
-                GetImage(name, collectionName.chatRoomList);
+                GetImage(name, CollectionName.chatRoomList);
             }
 
         }
@@ -308,13 +312,13 @@ namespace StrawberryClient.Model
         // 전체 이미지 새로고침
         public void Refresh()
         {
-            GetImage(userId, collectionName.UserImage);
+            GetImage(userId, CollectionName.UserImage);
 
             App.Current.Dispatcher.Invoke((Action)delegate
             {
                 for (int i = 0; i < friendsList.Count; i++)
                 {
-                    GetImage(friendsList[i].friendsName, collectionName.friendsList);
+                    GetImage(friendsList[i].friendsName, CollectionName.friendsList);
                 }
             });
         }
@@ -335,7 +339,7 @@ namespace StrawberryClient.Model
 
 
         // 프로필 이미지 가져오기
-        public void GetImage(string userId, Enum collectionName)
+        public void GetImage(string userId, CollectionName collectionName)
         {
             imageList.Add(userId + "/" + collectionName.ToString());
 
@@ -358,19 +362,19 @@ namespace StrawberryClient.Model
 
                     ImageSourceConverter c = new ImageSourceConverter();
 
-                    if (collection == collectionName.UserImage.ToString())
+                    if (collection == CollectionName.UserImage.ToString())
                     {
                         UserImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
                         changed("userImage");
                     }
 
-                    else if (collection == collectionName.friendsList.ToString())
+                    else if (collection == CollectionName.friendsList.ToString())
                     {
                         friendsList.FirstOrDefault(e => e.friendsName == userId).friendsImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
                         changed("friendsList");
                     }
 
-                    else if (collection == collectionName.chatRoomList.ToString())
+                    else if (collection == CollectionName.chatRoomList.ToString())
                     {
                         chatRoomsList.FirstOrDefault(e => e.roomName == userId).roomImage = (ImageSource)c.ConvertFrom(outStream.ToArray());
                         changed("chatRoomsList");

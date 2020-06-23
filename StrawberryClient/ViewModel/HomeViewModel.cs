@@ -176,6 +176,9 @@ namespace StrawberryClient.ViewModel
                         == MessageBoxResult.Yes)
                     {
                         homeModel.GetUser(i);
+                        
+                        // 서버에서 받아올 시간 벌기 위해 일부러 종료
+                        return;
                     }
                 }
             }

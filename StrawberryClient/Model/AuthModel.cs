@@ -1,4 +1,5 @@
 ﻿using StrawberryClient.Command;
+using StrawberryClient.Model.Enumerate;
 using StrawberryClient.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace StrawberryClient.Model
     class AuthModel
     {
         private int authNumber;
-        enum AuthInfo { True, False, Ready }
+
         public int AuthNumber
         {
             get { return authNumber; }
@@ -31,7 +32,7 @@ namespace StrawberryClient.Model
 
         private void AuthRecv(int cmd, string data)
         {
-            if(cmd == (int)AuthInfo.True)
+            if(cmd == (int)ResponseInfo.True)
             {
                 MessageBox.Show("인증이 완료되었습니다. 정상적인 이용이 가능합니다.");
                 Detach();
@@ -39,7 +40,7 @@ namespace StrawberryClient.Model
                 update.Execute("Login");
             }
 
-            else if(cmd == (int)AuthInfo.Ready)
+            else if(cmd == (int)ResponseInfo.Ready)
             {
                 MessageBox.Show("인증번호가 전송되었습니다. 인증을 진행해 주세요.");
             }

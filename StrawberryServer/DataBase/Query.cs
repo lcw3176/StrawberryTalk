@@ -73,20 +73,20 @@ namespace StrawberryServer.DataBase
             //cmd = new SQLiteCommand(sql, conn);
             //cmd.ExecuteNonQuery();
 
-            //sql = "drop table message";
-            //cmd = new SQLiteCommand(sql, conn);
-            //cmd.ExecuteNonQuery();
-
-            //sql = "drop table room";
-            //cmd = new SQLiteCommand(sql, conn);
-            //cmd.ExecuteNonQuery();
-
-            //sql = "drop table friendsList";
-            //cmd = new SQLiteCommand(sql, conn);
-            //cmd.ExecuteNonQuery();
-
-            cmd = new SQLiteCommand(s1, conn);
+            sql = "drop table message";
+            cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
+
+            sql = "drop table room";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+
+            sql = "drop table friendsList";
+            cmd = new SQLiteCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+
+            //cmd = new SQLiteCommand(s1, conn);
+            //cmd.ExecuteNonQuery();
 
             cmd = new SQLiteCommand(s2, conn);
             cmd.ExecuteNonQuery();
@@ -217,7 +217,7 @@ namespace StrawberryServer.DataBase
         }
 
 
-
+        
         // 채팅방 이름 가져오기
         public string GetRoom(string roomName)
         {            
