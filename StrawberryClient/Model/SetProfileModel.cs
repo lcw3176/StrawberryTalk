@@ -30,7 +30,7 @@ namespace StrawberryClient.Model
         }
 
         // 사진 설정 완료 메소드
-        public void complete()
+        public void Complete()
         {
             if(!string.IsNullOrEmpty(path))
             {
@@ -66,7 +66,7 @@ namespace StrawberryClient.Model
         }
 
         // 기본 프로필 사진으로 설정
-        public void setDefault()
+        public void SetDefault()
         {
             SocketConnection.GetInstance().Send("DefaultImage", "null");
         }

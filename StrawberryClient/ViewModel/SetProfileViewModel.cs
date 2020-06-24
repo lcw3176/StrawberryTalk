@@ -53,7 +53,7 @@ namespace StrawberryClient.ViewModel
         // 기본 프로필 사진으로 변경
         private void resetPictureExecuteMethod(object obj)
         {
-            setProfileModel.setDefault();
+            setProfileModel.SetDefault();
             (obj as Window).Close();
         }
 
@@ -82,7 +82,7 @@ namespace StrawberryClient.ViewModel
         // 설정 완료
         private void completeExecuteMethod(object obj)
         {
-            setProfileModel.complete();
+            setProfileModel.Complete();
             (obj as Window).Close();
         }
 

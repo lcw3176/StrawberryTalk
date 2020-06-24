@@ -220,7 +220,7 @@ namespace StrawberryServer.DataBase
         
         // 채팅방 이름 가져오기
         public string GetRoom(string roomName)
-        {            
+        {
             string sql = string.Format("SELECT name FROM room WHERE name = '{0}'", roomName);
             string room = string.Empty;
             

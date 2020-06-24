@@ -195,9 +195,6 @@
                                             HorizontalAlignment="Center"
                                             Width="60"
                                             CornerRadius="20">
-                                            <!--BorderBrush="Black"
-                                            BorderThickness="1"-->
-                                            
 
                                         <Border.Background>
                                             <ImageBrush Stretch="UniformToFill" 

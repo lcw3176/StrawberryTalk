@@ -26,7 +26,6 @@ namespace StrawberryClient
             InitializeComponent();
             DataContext = MainViewModel.GetInstance();
             Closing += MainWindow_Closing;
-            // 클로즈 부분 수정해야됨
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -45,6 +44,11 @@ namespace StrawberryClient
         {
             SocketConnection.GetInstance().DisConnect();
             App.Current.Shutdown();
+        }
+
+        private void minButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }

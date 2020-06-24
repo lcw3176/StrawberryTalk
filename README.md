@@ -150,23 +150,23 @@ CREATE TABLE user(
 ## 작동 모습
 ### 로그인, 회원가입(로그인, 회원가입, 인증)
 <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220636-36b77a00-b3e8-11ea-9d89-0481f0d66662.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220638-37e8a700-b3e8-11ea-8593-769e6f0eb37c.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220640-37e8a700-b3e8-11ea-9374-58894a0c6662.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220636-36b77a00-b3e8-11ea-9d89-0481f0d66662.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220638-37e8a700-b3e8-11ea-8593-769e6f0eb37c.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220640-37e8a700-b3e8-11ea-9374-58894a0c6662.png">
  </div>
   
 ### 메인 홈(메인 홈, 내 프로필 사진 설정, 사진 변경 후)
 <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220641-38813d80-b3e8-11ea-92e7-7348850bc6ca.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220642-38813d80-b3e8-11ea-9e97-85edfb67baf3.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220644-3919d400-b3e8-11ea-8975-bf6485c2c6b6.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220641-38813d80-b3e8-11ea-92e7-7348850bc6ca.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220642-38813d80-b3e8-11ea-9e97-85edfb67baf3.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220644-3919d400-b3e8-11ea-8975-bf6485c2c6b6.png">
  </div>
  
  ### 채팅 과정(단체 채팅방 생성, 채팅 진행)
  <div>
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220645-39b26a80-b3e8-11ea-882a-62f0b2fbc818.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220647-39b26a80-b3e8-11ea-9e05-4c323645d8b2.png">
-  <img width="300" src="https://user-images.githubusercontent.com/59993347/85220648-3a4b0100-b3e8-11ea-8b61-7db7c8ad71a3.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220645-39b26a80-b3e8-11ea-882a-62f0b2fbc818.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220647-39b26a80-b3e8-11ea-9e05-4c323645d8b2.png">
+  <img width="200" src="https://user-images.githubusercontent.com/59993347/85220648-3a4b0100-b3e8-11ea-8b61-7db7c8ad71a3.png">
  </div>
 
 

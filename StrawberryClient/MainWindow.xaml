@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StrawberryClient"
-        xmlns:viewModels="clr-namespace:StrawberryClient.ViewModel"
-        xmlns:views="clr-namespace:StrawberryClient.View"
         mc:Ignorable="d"
         x:Name="mainWindow"
         Title="Strawberry Talk" Height="600" Width="400" WindowStyle="None"
@@ -16,28 +14,45 @@
         BorderThickness="1">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="30"/>
+        </Grid.ColumnDefinitions>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+
+
         <StackPanel Grid.Row="0"
-                    Background="SlateGray"/>
+                    Grid.ColumnSpan="3"
+                    Background="SlateGray">
+        </StackPanel>
         
         <Button x:Name="closeButton"
                 Grid.Row="0"
+                Grid.Column="2"
                 Content="X"
                 Foreground="White"
                 Background="Transparent"
-                HorizontalAlignment="Right"
-                Width="30"
                 BorderThickness="0"
-                Click="closeButton_Click"
-                Height="20" 
-                VerticalAlignment="Bottom"/>
+                Click="closeButton_Click"/>
+
+        <Button x:Name="minButton"
+                Grid.Column="1"
+                Grid.Row="0"
+                Content="ㅡ"
+                Foreground="White"
+                Background="Transparent"
+                BorderThickness="0"
+                Click="minButton_Click"/>
 
 
-        <ContentControl Grid.Row="1" 
+        <ContentControl Grid.Row="1"
+                        Grid.ColumnSpan="3"
                         Content="{Binding SelectedViewModel, UpdateSourceTrigger=PropertyChanged}"
                         Background="Transparent"/>
 

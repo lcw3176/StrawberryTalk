@@ -1,5 +1,7 @@
 ﻿using StrawberryClient.Command;
 using StrawberryClient.Model;
+using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -66,7 +68,7 @@ namespace StrawberryClient.ViewModel
                 return;
             }
 
-            if(userNickname.Trim().Length > 10 || Regex.IsMatch(userNickname.Trim(), @"[ㄱ-ㅎ가힣]"))
+            if(userNickname.Trim().Length > 10 || Regex.IsMatch(userNickname.Trim(), @"[ㄱ-ㅎ가힣]") || userNickname.Any(ch => Char.IsLetter(ch)))
             {
                 MessageBox.Show("닉네임은 10글자 이하 영어만 허용됩니다.");
                 return;

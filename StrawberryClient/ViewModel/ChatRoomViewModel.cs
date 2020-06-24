@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,7 +15,7 @@ namespace StrawberryClient.ViewModel
 {
     class ChatRoomViewModel : INotifyPropertyChanged
     {
-        public delegate void Close(string room);
+        public delegate void Close(string roomName);
         public event Close closeEvent;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -69,16 +68,6 @@ namespace StrawberryClient.ViewModel
             }
         }
 
-        public ImageSource profileImage
-        {
-            get { return chatRoomModel.ProfileImage; }
-            set
-            {
-                chatRoomModel.ProfileImage = value;
-                OnPropertyUpdate("profileImage");
-            }
-        }
-
         public Dictionary<string, ImageSource> friendsImage
         {
             get { return chatRoomModel.FriendsImage; }
@@ -109,13 +98,13 @@ namespace StrawberryClient.ViewModel
             chatRoomModel.DetachAlarm();
         }
 
-        double height;
+        double screenHeight;
 
         // 스크롤 끝까지 당겼을 때 메세지 추가 요청
         public void scrollEnd(double height)
         {
-            this.height = height;
-            chatRoomModel.MoreMessage();
+            this.screenHeight = height;
+            chatRoomModel.GetMoreMessage();
         }
 
  
@@ -125,7 +114,7 @@ namespace StrawberryClient.ViewModel
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                scroll.ScrollToVerticalOffset(this.height);
+                scroll.ScrollToVerticalOffset(this.screenHeight);
             });
         }
 
@@ -146,14 +135,14 @@ namespace StrawberryClient.ViewModel
 
 
         // 초기화
-        public void Init(string roomName, string userId, string showedRoomName, ImageSource image, Dictionary<string, ImageSource> friendsImage)
+        public void Init(string userId, string roomName, string showedRoomName, Dictionary<string, ImageSource> friendsImage)
         {
             AttachSocket();
             this.roomName = roomName;
-            this.userId = userId;
             this.showedRoomName = showedRoomName;
-            profileImage = image;
+            this.userId = userId;
             this.friendsImage = friendsImage;
+
 
             SocketConnection.GetInstance().Send("Room", roomName);
 
@@ -173,7 +162,7 @@ namespace StrawberryClient.ViewModel
             roomView.endOfScroll -= scrollEnd;
             chatRoomModel.update -= NotifyUpdate;
             chatRoomModel.move -= MoveScrollToMiddle;
-            closeEvent(roomName);
+            closeEvent(showedRoomName);
             (obj as Window).Close();
         }
 

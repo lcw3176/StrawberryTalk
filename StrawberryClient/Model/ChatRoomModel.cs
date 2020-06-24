@@ -3,8 +3,6 @@ using StrawberryClient.Model.ObservableCollection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
 using System.Windows.Media;
 
 namespace StrawberryClient.Model
@@ -22,7 +20,6 @@ namespace StrawberryClient.Model
         private string userId;
         private string inputMessage = string.Empty;
         private int pageNation = 1;
-        private ImageSource profileImage;
         private Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
         ObservableCollection<MessageList> messageList = new ObservableCollection<MessageList>();
         public Dictionary<string, ImageSource> FriendsImage
@@ -35,12 +32,6 @@ namespace StrawberryClient.Model
         {
             get { return messageList; }
             set { messageList = value; }
-        }
-
-        public ImageSource ProfileImage
-        {
-            get { return profileImage; }
-            set { profileImage = value; }
         }
 
         public string RoomName
@@ -74,19 +65,19 @@ namespace StrawberryClient.Model
 
         public void AttachAlarm()
         {
-            SocketConnection.GetInstance().ChatRecv += ChatRecv;
+            SocketConnection.GetInstance().ChatRecv += Receive;
         }
 
         public void DetachAlarm()
         {
-            SocketConnection.GetInstance().ChatRecv -= ChatRecv;
+            SocketConnection.GetInstance().ChatRecv -= Receive;
             MessageList = null;
             FriendsImage = null;
         }
 
         string isSame = string.Empty;
 
-        private void ChatRecv(int cmd, string data)
+        private void Receive(int cmd, string data)
         {
             if(cmd == (int)ResponseInfo.First)
             {
@@ -195,8 +186,6 @@ namespace StrawberryClient.Model
                 {
                     string[] msg = messageChunk.Split('&');
 
-                    Console.WriteLine(messageChunk);
-
                     // [0] 이름, [1] 메세지
                     App.Current.Dispatcher.Invoke((Action)delegate
                     {
@@ -253,7 +242,7 @@ namespace StrawberryClient.Model
         }
 
         // 할일: chat 명령 보내는쪽에 메세지 카운터 넣어서 보내기
-        public void MoreMessage()
+        public void GetMoreMessage()
         {
             SocketConnection.GetInstance().Send("Message", roomName, pageNation.ToString());
         }

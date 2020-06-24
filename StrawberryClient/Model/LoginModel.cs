@@ -62,12 +62,12 @@ namespace StrawberryClient.Model
                 App.Current.Shutdown();
             }
             SocketConnection.GetInstance().StartRecv();
-            SocketConnection.GetInstance().LoginRecv += LoginRecv;
+            SocketConnection.GetInstance().LoginRecv += Receive;
         }
 
         private void Detach()
         {
-            SocketConnection.GetInstance().LoginRecv -= LoginRecv;
+            SocketConnection.GetInstance().LoginRecv -= Receive;
         }
 
         public void GoJoin()
@@ -77,7 +77,7 @@ namespace StrawberryClient.Model
             update.Execute("Join");
         }
 
-        private void LoginRecv(int cmd, string data)
+        private void Receive(int cmd, string data)
         {
             if (cmd == (int)ResponseInfo.False)
             {

@@ -1,13 +1,8 @@
 ﻿using StrawberryClient.Command;
 using StrawberryClient.Model;
 using StrawberryClient.Model.ObservableCollection;
-using StrawberryClient.View;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -166,47 +161,12 @@ namespace StrawberryClient.ViewModel
                 showedRoomName = (obj as TextBlock).Text;
             }
 
-            foreach (string i in showedRoomName.Split(','))
+            if(homeModel.IsFriend(showedRoomName))
             {
-                var isFriend = friendsList.FirstOrDefault(e => e.friendsName == i);
-                
-                if(isFriend == null)
-                {
-                    if(MessageBox.Show("등록된 친구가 아닙니다. 목록에 추가하시겠습니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning)
-                        == MessageBoxResult.Yes)
-                    {
-                        homeModel.GetUser(i);
-                        
-                        // 서버에서 받아올 시간 벌기 위해 일부러 종료
-                        return;
-                    }
-                }
-            }
-
-
-            if (string.IsNullOrEmpty(showedRoomName) || homeModel.isExist(showedRoomName)) { return; }
-
-            ShowRoom(showedRoomName);
-        }
-
-        // 채팅창 띄우기
-        private void ShowRoom(string showedRoomName)
-        {
-            string roomName = homeModel.SetChat(showedRoomName);
-            homeModel.addRooms(showedRoomName);
-            
-            ChatRoomViewModel roomViewModel = new ChatRoomViewModel();
-            roomViewModel.closeEvent += homeModel.Detach;
-
-            ImageSource thumbnail = friendsList.FirstOrDefault(e => e.friendsName == showedRoomName.Split(',')[0]).friendsImage;
-            Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
-
-            foreach (string i in showedRoomName.Split(','))
-            {
-                friendsImage.Add(i, friendsList.FirstOrDefault(e => e.friendsName == i).friendsImage);
+                homeModel.ShowRoom(showedRoomName);
             }
             
-            roomViewModel.Init(roomName, userId, showedRoomName, thumbnail, friendsImage);                          
         }
+
     }
 }

@@ -9,8 +9,9 @@ using System.Linq;
 using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Net.WebSockets;
 using StrawberryClient.Model.Enumerate;
+using System.Windows;
+using StrawberryClient.ViewModel;
 
 namespace StrawberryClient.Model
 {
@@ -25,7 +26,7 @@ namespace StrawberryClient.Model
         private ICommand chatCommand;
         private ICommand viewProfileCommand;
         private string findUser;
-        private List<string> activateRoom = new List<string>();
+        private Dictionary<string, string> activateRoom = new Dictionary<string, string>();
         ObservableCollection<Friends> friendsList = new ObservableCollection<Friends>();
         ObservableCollection<ChatRooms> chatRoomsList = new ObservableCollection<ChatRooms>();
         List<string> imageList = new List<string>();
@@ -81,12 +82,12 @@ namespace StrawberryClient.Model
 
         public HomeModel()
         {
-            SocketConnection.GetInstance().HomeRecv += HomeRecv;
-            SocketConnection.GetInstance().imageRecv += imageRecv;
+            SocketConnection.GetInstance().HomeRecv += TextReceive;
+            SocketConnection.GetInstance().imageRecv += imageReceive;
         }
 
 
-        private void HomeRecv(int cmd, string data)
+        private void TextReceive(int cmd, string data)
         {
             // 초기 세팅
             if(cmd == (int)ResponseInfo.Init)
@@ -179,7 +180,7 @@ namespace StrawberryClient.Model
                 string room = data.Split('/')[0];
                 string message = data.Remove(0, room.Length + 1);
 
-                if (activateRoom.Count == 0)
+                if (chatRoomsList.Count == 0)
                 {
                     alarm(message);
                 }
@@ -187,7 +188,7 @@ namespace StrawberryClient.Model
                 else
                 {
 
-                    foreach (string i in activateRoom)
+                    foreach (string i in activateRoom.Values)
                     {
                         if (i != room)
                         {
@@ -204,48 +205,35 @@ namespace StrawberryClient.Model
         }
 
         // 채팅방 존재 여부 확인
-        public bool isExist(string friendNames)
+        public bool isExist(string roomName)
         {
-            List<string> sortName = new List<string>();
-            sortName.Add(userId);
-
-            foreach(string i in friendNames.Split(','))
+            foreach (var i in chatRoomsList)
             {
-                sortName.Add(i);
-            }
-
-            sortName.Sort();
-
-            string roomName = string.Join("&", sortName);
-
-            foreach (string i in activateRoom)
-            {
-                if(i == roomName)
+                if(i.roomName == roomName)
                 {
                     return true;
                 }
             }
 
-            activateRoom.Add(roomName);
-
             return false;
         }
 
         // 채팅방 만들기(활성화 된 방 목록에 추가)
-        public string SetChat(string friendsName)
+        public void AddActivateRommList(string showedRoomName)
         {
-            List<string> sortName = new List<string>();
-            sortName.Add(userId);
+            List<string> roomName = new List<string>();
+            roomName.Add(userId);
 
-            foreach(string i in friendsName.Split(','))
+            foreach (string i in showedRoomName.Split(','))
             {
-                sortName.Add(i);
-            }            
-            sortName.Sort();
+                roomName.Add(i);
+            }
+            roomName.Sort();
 
-            string roomName = string.Join("&", sortName);
+            string sortedName = string.Join("&", roomName);
 
-            return roomName;
+            activateRoom.Add(showedRoomName, sortedName);
+            //return sortedName;
         }
 
         // 유저 검색으로 찾은 후 추가
@@ -262,6 +250,7 @@ namespace StrawberryClient.Model
 
             SocketConnection.GetInstance().Send("User", findUser);
         }
+
 
         // 활성 채팅방 해제
         public void Detach(string roomName)
@@ -285,28 +274,6 @@ namespace StrawberryClient.Model
             });
 
             GetImage(name, CollectionName.friendsList);
-        }
-
-        // 채팅방 목록 추가
-        public void addRooms(string name)
-        {
-            var item = chatRoomsList.FirstOrDefault(e => e.roomName == name);
-
-            // 중복 추가 방지
-            if (item == null)
-            {
-                App.Current.Dispatcher.Invoke((Action)delegate
-                {
-                    chatRoomsList.Add(new ChatRooms()
-                    {
-                        roomCommand = chatCommand,
-                        roomName = name,
-                    });
-                });
-
-                GetImage(name, CollectionName.chatRoomList);
-            }
-
         }
 
         // 전체 이미지 새로고침
@@ -337,6 +304,45 @@ namespace StrawberryClient.Model
             
         }
 
+        // 내 친구목록에 있는지 확인
+        public bool IsFriend(string showedRoomName)
+        {
+            foreach (string i in showedRoomName.Split(','))
+            {
+                var isFriend = friendsList.FirstOrDefault(e => e.friendsName == i);
+
+                if (isFriend == null)
+                {
+                    if (MessageBox.Show("등록된 친구가 아닙니다. 목록에 추가하시겠습니까?", "주의", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+                        == MessageBoxResult.Yes)
+                    {
+                        GetUser(i);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // 채팅창 띄우기
+        public void ShowRoom(string showedRoomName)
+        {
+            AddActivateRommList(showedRoomName);
+
+            ChatRoomViewModel roomViewModel = new ChatRoomViewModel();
+            roomViewModel.closeEvent += Detach;
+
+            Dictionary<string, ImageSource> friendsImage = new Dictionary<string, ImageSource>();
+
+            foreach (string i in showedRoomName.Split(','))
+            {
+                friendsImage.Add(i, friendsList.FirstOrDefault(e => e.friendsName == i).friendsImage);
+            }
+            
+            roomViewModel.Init(userId, activateRoom[showedRoomName], showedRoomName, friendsImage);
+        }
+
 
         // 프로필 이미지 가져오기
         public void GetImage(string userId, CollectionName collectionName)
@@ -347,7 +353,7 @@ namespace StrawberryClient.Model
         }
 
         // 이미지 받아서 처리
-        private void imageRecv(string id, byte[] image)
+        private void imageReceive(string id, byte[] image)
         {
             using (MemoryStream inStream = new MemoryStream(image, 14, image.Length - 14))
             {

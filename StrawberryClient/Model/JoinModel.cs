@@ -62,15 +62,15 @@ namespace StrawberryClient.Model
 
         public JoinModel()
         {
-            SocketConnection.GetInstance().JoinRecv += JoinRecv;
+            SocketConnection.GetInstance().JoinRecv += Receive;
         }
         
         private void Detach()
         {
-            SocketConnection.GetInstance().JoinRecv -= JoinRecv;
+            SocketConnection.GetInstance().JoinRecv -= Receive;
         }
 
-        private void JoinRecv(int cmd, string data)
+        private void Receive(int cmd, string data)
         {
             if (cmd == (int)ResponseInfo.Email)
             {

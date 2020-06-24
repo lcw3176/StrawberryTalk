@@ -1,11 +1,6 @@
 ﻿using StrawberryClient.Command;
 using StrawberryClient.Model.Enumerate;
 using StrawberryClient.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace StrawberryClient.Model
@@ -22,15 +17,15 @@ namespace StrawberryClient.Model
 
         public AuthModel()
         {
-            SocketConnection.GetInstance().AuthRecv += AuthRecv;
+            SocketConnection.GetInstance().AuthRecv += Receive;
         }
 
         private void Detach()
         {
-            SocketConnection.GetInstance().AuthRecv -= AuthRecv;
+            SocketConnection.GetInstance().AuthRecv -= Receive;
         }
 
-        private void AuthRecv(int cmd, string data)
+        private void Receive(int cmd, string data)
         {
             if(cmd == (int)ResponseInfo.True)
             {

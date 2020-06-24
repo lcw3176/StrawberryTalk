@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace StrawberryClient.Model
 {
@@ -58,7 +57,7 @@ namespace StrawberryClient.Model
             {
                 try
                 {
-                    GetSocket().Connect(new IPEndPoint(IPAddress.Parse("172.30.1.26"), 3000));
+                    GetSocket().Connect(new IPEndPoint(IPAddress.Loopback, 3000));
                 }
                 
 
